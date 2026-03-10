@@ -40,7 +40,7 @@ export function Footer({ className }: FooterProps) {
               className="flex items-center gap-2 text-lg font-semibold text-foreground"
             >
               <Heart className="h-5 w-5 text-sage" />
-              <span>Secret Stress</span>
+              <span>SILENT STRESS</span>
             </Link>
             <p className="text-sm text-muted-foreground">
               A safe, anonymous space for students to share academic pressure
@@ -114,7 +114,7 @@ export function Footer({ className }: FooterProps) {
         {/* Bottom Bar */}
         <div className="flex flex-col items-center justify-between gap-4 text-center md:flex-row md:text-left">
           <p className="text-xs text-muted-foreground">
-            {currentYear} Secret Stress. Made with care for students everywhere.
+            {currentYear} SILENT STRESS. Made with care for students everywhere.
           </p>
           <p className="text-xs text-muted-foreground">
             If you're in immediate danger, please call{" "}
@@ -140,3 +140,4 @@ export function Footer({ className }: FooterProps) {
 }
 
 export default Footer;
+

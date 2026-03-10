@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Storage utilities for Secret Stress
+ * Storage utilities for SILENT STRESS
  * Client-side only localStorage management with privacy-first design
  * 
  * IMPORTANT: All data is stored locally and automatically expires after 30 days.
@@ -184,7 +184,7 @@ export const deleteExpiredSubmissions = (): number => {
 // ============================================================================
 
 /**
- * Clear ALL Secret Stress data from localStorage
+ * Clear ALL SILENT STRESS data from localStorage
  * Use this for emergency situations or user request
  * Returns true if successful
  */
@@ -194,7 +194,7 @@ export const clearAllData = (): boolean => {
   }
 
   try {
-    // Remove all Secret Stress related keys
+    // Remove all SILENT STRESS related keys
     Object.values(STORAGE_KEYS).forEach((key) => {
       localStorage.removeItem(key);
     });

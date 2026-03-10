@@ -222,3 +222,4 @@ export function MoodSlider({
 }
 
 export default MoodSlider;
+

@@ -122,7 +122,7 @@ export function HeroSection({ className }: HeroSectionProps) {
             variants={itemVariants}
             className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground md:text-xl"
           >
-            Secret Stress is a safe space for students to share academic pressure
+            SILENT STRESS is a safe space for students to share academic pressure
             anonymously. No judgment, no tracking—just support from people who
             understand.
           </motion.p>
@@ -185,3 +185,4 @@ export function HeroSection({ className }: HeroSectionProps) {
 }
 
 export default HeroSection;
+

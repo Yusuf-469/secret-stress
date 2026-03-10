@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Crisis Resources Page - Secret Stress
+ * Crisis Resources Page - SILENT STRESS
  *
  * Provides immediate access to crisis support resources.
  * Features prominent emergency contacts, validating messaging,
@@ -426,3 +426,4 @@ export default function CrisisResourcesPage() {
     </PageTransition>
   );
 }
+

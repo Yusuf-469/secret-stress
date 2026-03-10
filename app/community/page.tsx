@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Community Page - Secret Stress
+ * Community Page - SILENT STRESS
  *
  * Displays anonymous community posts with privacy protection via BlurReveal.
  * Features filtering, empty states, and encouraging CTAs.
@@ -278,3 +278,4 @@ export default function CommunityPage() {
     </PageTransition>
   );
 }
+

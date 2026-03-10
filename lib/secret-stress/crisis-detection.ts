@@ -1,5 +1,5 @@
 /**
- * Crisis Detection Utility for Secret Stress
+ * Crisis Detection Utility for SILENT STRESS
  * 
  * This module provides crisis keyword detection and response generation.
  * It is designed to be sensitive but not alarmist - prioritizing user safety

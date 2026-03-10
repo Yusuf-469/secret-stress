@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Submit Page - Secret Stress
+ * Submit Page - SILENT STRESS
  *
  * Page for submitting anonymous stories about academic stress.
  * Features the SubmissionForm component with crisis detection,
@@ -293,3 +293,4 @@ export default function SubmitPage() {
     </ProtectedRoute>
   );
 }
+

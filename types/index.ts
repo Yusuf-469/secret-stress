@@ -194,3 +194,4 @@ export interface FriendSpending {
   friendName: string;
   amount: number;
 }
+

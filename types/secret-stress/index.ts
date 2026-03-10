@@ -1,5 +1,5 @@
 /**
- * Type definitions for Secret Stress
+ * Type definitions for SILENT STRESS
  * An anonymous academic pressure reporting system
  */
 
@@ -340,3 +340,4 @@ export const MAX_SUBMISSION_LENGTH = 2000;
 
 /** Minimum submission length */
 export const MIN_SUBMISSION_LENGTH = 10;
+

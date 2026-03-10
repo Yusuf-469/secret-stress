@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * About Page - Secret Stress
+ * About Page - SILENT STRESS
  *
  * Provides information about the mission, privacy commitments,
  * how anonymity works, and clarifications about the service.
@@ -55,7 +55,7 @@ const privacyCommitments = [
     icon: Lock,
     title: "No Account Required",
     description:
-      "You don't need to sign up, log in, or provide any personal information to use Secret Stress.",
+      "You don't need to sign up, log in, or provide any personal information to use SILENT STRESS.",
   },
   {
     icon: Shield,
@@ -118,7 +118,7 @@ export default function AboutPage() {
                   A safe space for students
                 </h1>
                 <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-                  Secret Stress was created with one simple goal: to give students a place
+                  SILENT STRESS was created with one simple goal: to give students a place
                   to share their struggles without fear of judgment or exposure.
                 </p>
               </motion.div>
@@ -135,7 +135,7 @@ export default function AboutPage() {
                       We believe that every student deserves a safe place to express their
                       struggles with academic pressure. In a world of constant comparison,
                       social media perfection, and high expectations, it's easy to feel
-                      like you're the only one struggling. You're not. Secret Stress
+                      like you're the only one struggling. You're not. SILENT STRESS
                       exists to remind you that your feelings are valid, your stress is real,
                       and you deserve support—without having to reveal your identity.
                     </p>
@@ -156,7 +156,7 @@ export default function AboutPage() {
                     struggling because of stigma or fear of judgment.
                   </p>
                   <p>
-                    We created Secret Stress because we believe that sharing your story—even
+                    We created SILENT STRESS because we believe that sharing your story—even
                     anonymously—can be incredibly powerful. It helps you process your feelings,
                     and it helps others realize they're not alone in their struggles.
                   </p>
@@ -214,7 +214,7 @@ export default function AboutPage() {
                   <CardContent>
                     <div className="space-y-4 text-muted-foreground">
                       <p>
-                        When you submit a story on Secret Stress, here's what happens:
+                        When you submit a story on SILENT STRESS, here's what happens:
                       </p>
                       <ol className="list-inside list-decimal space-y-2">
                         <li>
@@ -286,7 +286,7 @@ export default function AboutPage() {
                   <CardContent>
                     <div className="space-y-4 text-muted-foreground">
                       <p>
-                        <strong className="text-foreground">No.</strong> Secret Stress is not a replacement
+                        <strong className="text-foreground">No.</strong> SILENT STRESS is not a replacement
                         for professional mental health treatment. We are a peer support platform,
                         not a therapy service.
                       </p>
@@ -303,7 +303,7 @@ export default function AboutPage() {
                         <li>Your doctor or healthcare provider</li>
                       </ul>
                       <p>
-                        Think of Secret Stress as a complement to professional care, not a substitute.
+                        Think of SILENT STRESS as a complement to professional care, not a substitute.
                         We're here to help you feel less alone, but we can't provide the personalized
                         treatment that mental health professionals offer.
                       </p>
@@ -327,7 +327,7 @@ export default function AboutPage() {
                   </CardHeader>
                   <CardContent>
                     <p className="mb-4 text-muted-foreground">
-                      We're always looking to improve Secret Stress. If you have suggestions,
+                      We're always looking to improve SILENT STRESS. If you have suggestions,
                       found a bug, or just want to share how the platform has helped you,
                       we'd love to hear from you.
                     </p>
@@ -359,7 +359,7 @@ export default function AboutPage() {
                   Made with care
                 </h3>
                 <p className="mx-auto max-w-xl text-muted-foreground">
-                  Secret Stress was built by people who understand academic pressure firsthand.
+                  SILENT STRESS was built by people who understand academic pressure firsthand.
                   We've been there—the late nights, the self-doubt, the feeling that everyone
                   else has it figured out. We made this because we needed it, and we hope it
                   helps you too.
@@ -377,3 +377,4 @@ export default function AboutPage() {
     </PageTransition>
   );
 }
+

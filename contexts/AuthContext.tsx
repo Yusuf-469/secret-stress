@@ -3,7 +3,7 @@
 /**
  * Auth Context
  *
- * Manages authentication state for the Secret Stress application.
+ * Manages authentication state for the SILENT STRESS application.
  * Since this is an anonymous platform, authentication is simplified.
  */
 
@@ -105,3 +105,4 @@ export function useAuth() {
   }
   return context;
 }
+

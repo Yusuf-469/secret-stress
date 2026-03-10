@@ -1,22 +1,21 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { EmergencyExitButton } from "@/components/secret-stress/EmergencyExitButton";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "Secret Stress - Anonymous Academic Pressure Reporting",
+  title: "SILENT STRESS - Anonymous Academic Pressure Reporting",
   description: "A safe, anonymous space to share academic stress and find support. No tracking, no judgment, just understanding.",
   keywords: ["academic stress", "mental health", "student support", "anonymous", "pressure relief"],
-  authors: [{ name: "Secret Stress" }],
-  metadataBase: new URL("https://secretstress.app"),
+  authors: [{ name: "SILENT STRESS" }],
+  metadataBase: new URL("https://silentstress.app"),
   openGraph: {
-    title: "Secret Stress - Anonymous Academic Pressure Reporting",
+    title: "SILENT STRESS - Anonymous Academic Pressure Reporting",
     description: "A safe, anonymous space to share academic stress and find support.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Secret Stress",
+    title: "SILENT STRESS",
     description: "Anonymous academic pressure reporting system",
   },
   // Privacy and security headers
@@ -60,9 +59,6 @@ export default function RootLayout({
           Skip to main content
         </a>
         
-        {/* Emergency exit button - fixed position */}
-        <EmergencyExitButton />
-        
         {/* Main content */}
         <main id="main-content" className="relative">
           <Providers>
@@ -73,3 +69,4 @@ export default function RootLayout({
     </html>
   );
 }
+

@@ -3,20 +3,20 @@
 /**
  * Navigation Component
  *
- * Mobile-first responsive navigation for Secret Stress.
- * Includes emergency exit button and accessible navigation.
+ * Mobile-first responsive navigation for SILENT STRESS.
+ * Includes accessible navigation.
  *
  * Features:
  * - Mobile-first responsive design
  * - Links: Home, Submit, Community, Toolkit, Crisis Resources, About
  * - Active state indicator
- * - Emergency exit button integrated
  * - Accessible with aria-current
  * - Collapses to hamburger on mobile
  */
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
@@ -29,7 +29,6 @@ import {
   Phone,
   Info,
   LogIn,
-  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
@@ -60,15 +59,6 @@ export function Navigation({ className }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const shouldReduceMotion = useReducedMotion();
 
-  const handleEmergencyExit = useCallback(() => {
-    // Clear sensitive data before redirecting
-    if (typeof window !== "undefined") {
-      const forms = document.querySelectorAll("form");
-      forms.forEach((form) => form.reset());
-      window.location.href = "https://www.google.com/search?q=weather";
-    }
-  }, []);
-
   const isActive = useCallback(
     (href: string) => {
       if (href === "/") {
@@ -92,8 +82,14 @@ export function Navigation({ className }: NavigationProps) {
           href="/"
           className="flex items-center gap-2 text-lg font-semibold text-foreground transition-colors hover:text-sage-dark"
         >
-          <Heart className="h-5 w-5 text-sage" />
-          <span>Secret Stress</span>
+          <Image 
+            src="/silent stress.png" 
+            alt="SILENT STRESS" 
+            width={32} 
+            height={32} 
+            className="h-8 w-auto"
+          />
+          <span className="hidden sm:inline">SILENT STRESS</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -129,32 +125,8 @@ export function Navigation({ className }: NavigationProps) {
           })}
         </nav>
 
-        {/* Desktop Emergency Exit */}
-        <div className="hidden items-center gap-2 md:flex">
-          <Button
-            onClick={handleEmergencyExit}
-            variant="destructive"
-            size="sm"
-            className="gap-1.5"
-          >
-            <LogOut className="h-4 w-4" />
-            Exit
-          </Button>
-        </div>
-
         {/* Mobile Navigation */}
         <div className="flex items-center gap-2 md:hidden">
-          {/* Mobile Emergency Exit */}
-          <Button
-            onClick={handleEmergencyExit}
-            variant="destructive"
-            size="icon"
-            className="h-9 w-9"
-            aria-label="Emergency exit"
-          >
-            <LogOut className="h-4 w-4" />
-          </Button>
-
           {/* Mobile Menu */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
@@ -178,8 +150,14 @@ export function Navigation({ className }: NavigationProps) {
                     className="flex items-center gap-2 text-lg font-semibold"
                     onClick={() => setIsOpen(false)}
                   >
-                    <Heart className="h-5 w-5 text-sage" />
-                    <span>Secret Stress</span>
+                    <Image 
+                      src="/silent stress.png" 
+                      alt="SILENT STRESS" 
+                      width={24} 
+                      height={24} 
+                      className="h-6 w-auto"
+                    />
+                    <span>SILENT STRESS</span>
                   </Link>
                 </div>
 
@@ -237,3 +215,4 @@ export function Navigation({ className }: NavigationProps) {
 }
 
 export default Navigation;
+

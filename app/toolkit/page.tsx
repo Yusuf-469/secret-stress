@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Toolkit Page - Secret Stress
+ * Toolkit Page - SILENT STRESS
  *
  * Provides self-care tools and coping strategies for managing stress.
  * Features the BreathingWidget prominently, plus additional coping
@@ -381,3 +381,4 @@ export default function ToolkitPage() {
     </PageTransition>
   );
 }
+

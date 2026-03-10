@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Login/Signup Page - Secret Stress
+ * Login/Signup Page - SILENT STRESS
  *
  * Authentication page with login and signup options.
  * This is the entry point - users must authenticate to access the site.
@@ -219,7 +219,7 @@ export default function LoginPage() {
               <ScrollReveal direction="up" duration={0.6}>
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-sage/10 px-4 py-1.5 text-sm font-medium text-sage-dark">
                   <Heart className="h-4 w-4" />
-                  About Secret Stress
+                  About SILENT STRESS
                 </div>
               </ScrollReveal>
 
@@ -231,7 +231,7 @@ export default function LoginPage() {
 
               <ScrollReveal direction="up" duration={0.6} delay={0.2}>
                 <p className="text-lg text-muted-foreground">
-                  Secret Stress was created with one simple goal: to give students
+                  SILENT STRESS was created with one simple goal: to give students
                   a place to share their struggles without fear of judgment or
                   exposure. We believe every student deserves support—without
                   having to reveal their identity.
@@ -306,3 +306,4 @@ export default function LoginPage() {
     </div>
   );
 }
+
