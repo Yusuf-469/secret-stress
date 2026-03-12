@@ -21,29 +21,34 @@ interface FeatureCardProps {
   title: string;
   description: string;
   className?: string;
-  variant?: "default" | "sage" | "sand" | "rose";
+  variant?: "default" | "sage" | "sand" | "rose" | "blue";
 }
 
 const variantStyles = {
   default: {
     iconBg: "bg-muted",
     iconColor: "text-foreground",
-    hoverBorder: "hover:border-sage/30",
+    hoverBorder: "hover:border-blue-30",
   },
   sage: {
-    iconBg: "bg-sage/10",
-    iconColor: "text-sage-dark",
-    hoverBorder: "hover:border-sage/50",
+    iconBg: "bg-blue-100",
+    iconColor: "text-blue-700",
+    hoverBorder: "hover:border-blue-500",
   },
   sand: {
-    iconBg: "bg-sand/30",
-    iconColor: "text-sand-dark",
-    hoverBorder: "hover:border-sand/50",
+    iconBg: "bg-blue-50",
+    iconColor: "text-blue-600",
+    hoverBorder: "hover:border-blue-400",
   },
   rose: {
-    iconBg: "bg-rose/10",
-    iconColor: "text-rose-dark",
-    hoverBorder: "hover:border-rose/50",
+    iconBg: "bg-red-50",
+    iconColor: "text-red-600",
+    hoverBorder: "hover:border-red-400",
+  },
+  blue: {
+    iconBg: "bg-blue-100",
+    iconColor: "text-blue-700",
+    hoverBorder: "hover:border-blue-500",
   },
 };
 
