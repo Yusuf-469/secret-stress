@@ -43,28 +43,28 @@ const features = [
     title: "Anonymous Sharing",
     description:
       "Share your thoughts without fear of judgment. Your identity stays completely private.",
-    variant: "sage" as const,
+    variant: "blue" as const,
   },
   {
     icon: Users,
     title: "Community Support",
     description:
       "Connect with others who understand what you're going through. You're not alone.",
-    variant: "sand" as const,
+    variant: "blue" as const,
   },
   {
     icon: Phone,
     title: "Crisis Resources",
     description:
       "Immediate access to professional help when you need it most. 24/7 support available.",
-    variant: "rose" as const,
+    variant: "blue" as const,
   },
   {
     icon: Heart,
     title: "Self-Care Toolkit",
     description:
       "Breathing exercises and coping strategies to help you manage stress in the moment.",
-    variant: "sage" as const,
+    variant: "blue" as const,
   },
 ];
 
@@ -120,15 +120,15 @@ export default function HomePage() {
     return (
       <div className="flex min-h-screen flex-col">
         <Navigation />
-        <main className="flex-1 flex items-center justify-center bg-gradient-to-b from-background via-sage/5 to-background px-4">
+        <main className="flex-1 flex items-center justify-center bg-gradient-to-b from-background via-blue-50/30 to-background px-4">
           <div className="container mx-auto max-w-4xl text-center">
             <motion.div
               initial={shouldReduceMotion ? {} : { opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
             >
-              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-sage/20">
-                <Heart className="h-10 w-10 text-sage" />
+              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-blue-100">
+                <Heart className="h-10 w-10 text-blue-600" />
               </div>
               <h1 className="mb-4 text-3xl font-bold text-foreground md:text-4xl">
                 Welcome to SILENT STRESS
@@ -138,14 +138,14 @@ export default function HomePage() {
               </p>
               <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Link href="/submit">
-                  <Button size="lg" className="bg-sage hover:bg-sage-dark">
+                  <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
                     <PenLine className="mr-2 h-4 w-4" />
                     Share your story
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
                 <Link href="/community">
-                  <Button size="lg" variant="outline" className="border-sage">
+                  <Button size="lg" variant="outline" className="border-blue-300 text-blue-600 hover:bg-blue-50">
                     <Users className="mr-2 h-4 w-4" />
                     Browse Community
                   </Button>
@@ -173,12 +173,12 @@ export default function HomePage() {
       {/* Hero Section */}
       <motion.section
         style={{ opacity: heroOpacity, scale: heroScale }}
-        className="relative overflow-hidden bg-gradient-to-b from-sage/10 via-background to-background px-4 py-16 md:py-24"
+        className="relative overflow-hidden bg-gradient-to-b from-blue-50/50 via-background to-background px-4 py-16 md:py-24"
       >
         {/* Background decorative elements */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <motion.div
-            className="absolute -left-20 top-20 h-64 w-64 rounded-full bg-sage/10 blur-3xl"
+            className="absolute -left-20 top-20 h-64 w-64 rounded-full bg-blue-200/30 blur-3xl"
             animate={
               shouldReduceMotion
                 ? {}
@@ -194,7 +194,7 @@ export default function HomePage() {
             }}
           />
           <motion.div
-            className="absolute -right-20 bottom-20 h-64 w-64 rounded-full bg-rose/10 blur-3xl"
+            className="absolute -right-20 bottom-20 h-64 w-64 rounded-full bg-blue-300/30 blur-3xl"
             animate={
               shouldReduceMotion
                 ? {}
