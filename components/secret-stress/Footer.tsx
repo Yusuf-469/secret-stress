@@ -13,7 +13,8 @@
  */
 
 import Link from "next/link";
-import { Heart, Shield, Clock, Phone } from "lucide-react";
+import Image from "next/image";
+import { Shield, Clock, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface FooterProps {
@@ -39,8 +40,13 @@ export function Footer({ className }: FooterProps) {
               href="/"
               className="flex items-center gap-2 text-lg font-semibold text-foreground"
             >
-              <Heart className="h-5 w-5 text-sage" />
-              <span>SILENT STRESS</span>
+              <Image 
+                src="/silent stress.png" 
+                alt="SILENT STRESS" 
+                width={120} 
+                height={40} 
+                className="h-10 w-auto"
+              />
             </Link>
             <p className="text-sm text-muted-foreground">
               A safe, anonymous space for students to share academic pressure

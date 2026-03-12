@@ -82,16 +82,16 @@ export function Navigation({ className }: NavigationProps) {
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2 text-lg font-semibold text-foreground transition-colors hover:text-sage-dark"
+          className="flex items-center gap-2 text-lg font-semibold text-foreground transition-colors hover:text-blue-700"
         >
           <Image 
             src="/silent stress.png" 
             alt="SILENT STRESS" 
-            width={32} 
-            height={32} 
-            className="h-8 w-auto"
+            width={120} 
+            height={40} 
+            className="h-10 w-auto"
+            priority
           />
-          <span className="hidden sm:inline">SILENT STRESS</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -107,7 +107,7 @@ export function Navigation({ className }: NavigationProps) {
                 className={cn(
                   "relative flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                   active
-                    ? "text-sage-dark"
+                    ? "text-blue-700"
                     : "text-muted-foreground hover:text-foreground"
                 )}
                 aria-current={active ? "page" : undefined}
@@ -117,7 +117,7 @@ export function Navigation({ className }: NavigationProps) {
                 {active && (
                   <motion.div
                     layoutId="activeNav"
-                    className="absolute inset-0 rounded-md bg-sage/10"
+                    className="absolute inset-0 rounded-md bg-blue-100"
                     transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.2 }}
                     style={{ zIndex: -1 }}
                   />
