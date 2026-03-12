@@ -129,11 +129,11 @@ export default function HomePage() {
             >
               <div className="mx-auto mb-6">
                 <Image 
-                  src="/silent stress.png" 
+                  src="/silent-stress.svg" 
                   alt="SILENT STRESS" 
-                  width={250} 
-                  height={100} 
-                  className="h-24 w-auto"
+                  width={180} 
+                  height={80} 
+                  className="h-20 w-auto"
                 />
               </div>
               <h1 className="mb-4 text-3xl font-bold text-foreground md:text-4xl">

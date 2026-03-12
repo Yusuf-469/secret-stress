@@ -85,11 +85,11 @@ export function Navigation({ className }: NavigationProps) {
           className="flex items-center gap-2 transition-opacity hover:opacity-80"
         >
           <Image 
-            src="/silent stress.png" 
+            src="/silent-stress.svg" 
             alt="SILENT STRESS" 
-            width={120} 
+            width={100} 
             height={40} 
-            className="h-8 sm:h-10 w-auto"
+            className="h-8 sm:h-9 w-auto"
             priority
           />
         </Link>
