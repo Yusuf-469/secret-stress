@@ -127,8 +127,14 @@ export default function HomePage() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
             >
-              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-blue-100">
-                <Heart className="h-10 w-10 text-blue-600" />
+              <div className="mx-auto mb-6 flex h-20 w-auto items-center justify-center">
+                <Image 
+                  src="/silent stress.png" 
+                  alt="SILENT STRESS" 
+                  width={200} 
+                  height={80} 
+                  className="h-20 w-auto"
+                />
               </div>
               <h1 className="mb-4 text-3xl font-bold text-foreground md:text-4xl">
                 Welcome to SILENT STRESS
