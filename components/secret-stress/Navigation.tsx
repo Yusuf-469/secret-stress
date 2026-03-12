@@ -82,14 +82,14 @@ export function Navigation({ className }: NavigationProps) {
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2 text-lg font-semibold text-foreground transition-colors hover:text-blue-700"
+          className="flex items-center gap-2 transition-opacity hover:opacity-80"
         >
           <Image 
             src="/silent stress.png" 
             alt="SILENT STRESS" 
             width={120} 
             height={40} 
-            className="h-10 w-auto"
+            className="h-8 sm:h-10 w-auto"
             priority
           />
         </Link>
