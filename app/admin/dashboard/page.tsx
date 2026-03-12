@@ -109,31 +109,31 @@ export default function AdminDashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-blue-50">
       {/* Header */}
-      <header className="border-b border-slate-700/50 bg-slate-800/50 backdrop-blur-xl sticky top-0 z-40">
+      <header className="border-b border-blue-100 bg-white/80 backdrop-blur-xl sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link href="/" className="flex items-center gap-2">
-                <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
                   <Shield className="h-5 w-5 text-white" />
                 </div>
-                <span className="text-xl font-bold text-white">SILENT STRESS</span>
+                <span className="text-xl font-bold text-gray-900">SILENT STRESS</span>
               </Link>
-              <Badge variant="outline" className="border-indigo-500/50 text-indigo-400">
+              <Badge variant="outline" className="border-blue-500/50 text-blue-600">
                 Admin Panel
               </Badge>
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-slate-400">
+              <span className="text-sm text-gray-600">
                 Welcome, {admin?.username}
               </span>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleLogout}
-                className="text-slate-400 hover:text-white"
+                className="text-gray-600 hover:text-gray-900"
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
@@ -151,16 +151,16 @@ export default function AdminDashboardPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <Card className="bg-slate-800/50 border-slate-700/50">
+            <Card className="bg-white border-blue-100">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-slate-400">
+                <CardTitle className="text-sm font-medium text-blue-600">
                   Total Submissions
                 </CardTitle>
-                <MessageSquare className="h-4 w-4 text-indigo-400" />
+                <MessageSquare className="h-4 w-4 text-blue-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">{mockStats.totalSubmissions.toLocaleString()}</div>
-                <p className="text-xs text-green-400 flex items-center mt-1">
+                <div className="text-2xl font-bold text-gray-900">{mockStats.totalSubmissions.toLocaleString()}</div>
+                <p className="text-xs text-green-600 flex items-center mt-1">
                   <TrendingUp className="h-3 w-3 mr-1" />
                   +{mockStats.weeklyGrowth}% this week
                 </p>
@@ -173,16 +173,16 @@ export default function AdminDashboardPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <Card className="bg-slate-800/50 border-slate-700/50">
+            <Card className="bg-white border-blue-100">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-slate-400">
+                <CardTitle className="text-sm font-medium text-blue-600">
                   Active Users
                 </CardTitle>
-                <Users className="h-4 w-4 text-purple-400" />
+                <Users className="h-4 w-4 text-blue-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">{mockStats.activeUsers.toLocaleString()}</div>
-                <p className="text-xs text-green-400 flex items-center mt-1">
+                <div className="text-2xl font-bold text-gray-900">{mockStats.activeUsers.toLocaleString()}</div>
+                <p className="text-xs text-green-600 flex items-center mt-1">
                   <TrendingUp className="h-3 w-3 mr-1" />
                   +{mockStats.monthlyGrowth}% this month
                 </p>
@@ -195,16 +195,16 @@ export default function AdminDashboardPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <Card className="bg-slate-800/50 border-slate-700/50">
+            <Card className="bg-white border-blue-100">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-slate-400">
+                <CardTitle className="text-sm font-medium text-blue-600">
                   Crisis Alerts
                 </CardTitle>
-                <AlertTriangle className="h-4 w-4 text-red-400" />
+                <AlertTriangle className="h-4 w-4 text-red-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">{mockStats.crisisAlerts}</div>
-                <p className="text-xs text-red-400 flex items-center mt-1">
+                <div className="text-2xl font-bold text-gray-900">{mockStats.crisisAlerts}</div>
+                <p className="text-xs text-red-600 flex items-center mt-1">
                   Requires attention
                 </p>
               </CardContent>
@@ -216,16 +216,16 @@ export default function AdminDashboardPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <Card className="bg-slate-800/50 border-slate-700/50">
+            <Card className="bg-white border-blue-100">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-slate-400">
+                <CardTitle className="text-sm font-medium text-blue-600">
                   Resolved Cases
                 </CardTitle>
-                <CheckCircle className="h-4 w-4 text-green-400" />
+                <CheckCircle className="h-4 w-4 text-green-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">{mockStats.resolvedCases.toLocaleString()}</div>
-                <p className="text-xs text-slate-400 flex items-center mt-1">
+                <div className="text-2xl font-bold text-gray-900">{mockStats.resolvedCases.toLocaleString()}</div>
+                <p className="text-xs text-gray-500 flex items-center mt-1">
                   87% resolution rate
                 </p>
               </CardContent>
@@ -246,8 +246,8 @@ export default function AdminDashboardPage() {
               variant={activeTab === tab.id ? "default" : "ghost"}
               onClick={() => setActiveTab(tab.id)}
               className={activeTab === tab.id 
-                ? "bg-indigo-600 hover:bg-indigo-700" 
-                : "text-slate-400 hover:text-white hover:bg-slate-800"}
+                ? "bg-blue-600 hover:bg-blue-700" 
+                : "text-blue-600 hover:text-blue-800 hover:bg-blue-50"}
             >
               <tab.icon className="h-4 w-4 mr-2" />
               {tab.label}
@@ -263,11 +263,11 @@ export default function AdminDashboardPage() {
             className="grid gap-6 lg:grid-cols-2"
           >
             {/* Recent Submissions */}
-            <Card className="bg-slate-800/50 border-slate-700/50">
+            <Card className="bg-white border-blue-100">
               <CardHeader>
-                <CardTitle className="text-white flex items-center justify-between">
+                <CardTitle className="text-gray-900 flex items-center justify-between">
                   Recent Submissions
-                  <Link href="/admin/dashboard/submissions" className="text-sm text-indigo-400 hover:text-indigo-300">
+                  <Link href="/admin/dashboard/submissions" className="text-sm text-blue-600 hover:text-blue-800">
                     View All
                   </Link>
                 </CardTitle>
@@ -277,10 +277,10 @@ export default function AdminDashboardPage() {
                   {mockSubmissions.map((submission) => (
                     <div
                       key={submission.id}
-                      className="flex items-start justify-between p-3 rounded-lg bg-slate-700/30"
+                      className="flex items-start justify-between p-3 rounded-lg bg-blue-50"
                     >
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-white truncate">{submission.content}</p>
+                        <p className="text-sm text-gray-900 truncate">{submission.content}</p>
                         <div className="flex items-center gap-2 mt-2">
                           <Badge variant="outline" className="text-xs">
                             Level: {submission.stressLevel}/10
@@ -294,13 +294,13 @@ export default function AdminDashboardPage() {
                       </div>
                       <div className="flex items-center gap-2 ml-4">
                         {submission.status === "pending" && (
-                          <Badge className="bg-yellow-500/20 text-yellow-400">Pending</Badge>
+                          <Badge className="bg-yellow-100 text-yellow-700">Pending</Badge>
                         )}
                         {submission.status === "reviewed" && (
-                          <Badge className="bg-green-500/20 text-green-400">Reviewed</Badge>
+                          <Badge className="bg-green-100 text-green-700">Reviewed</Badge>
                         )}
                         {submission.status === "flagged" && (
-                          <Badge className="bg-red-500/20 text-red-400">Flagged</Badge>
+                          <Badge className="bg-red-100 text-red-700">Flagged</Badge>
                         )}
                       </div>
                     </div>
@@ -310,26 +310,26 @@ export default function AdminDashboardPage() {
             </Card>
 
             {/* Quick Actions */}
-            <Card className="bg-slate-800/50 border-slate-700/50">
+            <Card className="bg-white border-blue-100">
               <CardHeader>
-                <CardTitle className="text-white">Quick Actions</CardTitle>
+                <CardTitle className="text-gray-900">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
-                  <Button variant="outline" className="h-auto py-4 flex-col gap-2 border-slate-600 hover:bg-slate-700 hover:border-slate-500">
-                    <Eye className="h-5 w-5 text-indigo-400" />
+                  <Button variant="outline" className="h-auto py-4 flex-col gap-2 border-blue-200 hover:bg-blue-50 hover:border-blue-300">
+                    <Eye className="h-5 w-5 text-blue-600" />
                     <span className="text-sm">Review Pending</span>
                   </Button>
-                  <Button variant="outline" className="h-auto py-4 flex-col gap-2 border-slate-600 hover:bg-slate-700 hover:border-slate-500">
-                    <AlertTriangle className="h-5 w-5 text-red-400" />
+                  <Button variant="outline" className="h-auto py-4 flex-col gap-2 border-blue-200 hover:bg-blue-50 hover:border-blue-300">
+                    <AlertTriangle className="h-5 w-5 text-red-500" />
                     <span className="text-sm">Crisis Alerts</span>
                   </Button>
-                  <Button variant="outline" className="h-auto py-4 flex-col gap-2 border-slate-600 hover:bg-slate-700 hover:border-slate-500">
-                    <Users className="h-5 w-5 text-purple-400" />
+                  <Button variant="outline" className="h-auto py-4 flex-col gap-2 border-blue-200 hover:bg-blue-50 hover:border-blue-300">
+                    <Users className="h-5 w-5 text-blue-600" />
                     <span className="text-sm">Manage Users</span>
                   </Button>
-                  <Button variant="outline" className="h-auto py-4 flex-col gap-2 border-slate-600 hover:bg-slate-700 hover:border-slate-500">
-                    <Activity className="h-5 w-5 text-green-400" />
+                  <Button variant="outline" className="h-auto py-4 flex-col gap-2 border-blue-200 hover:bg-blue-50 hover:border-blue-300">
+                    <Activity className="h-5 w-5 text-green-500" />
                     <span className="text-sm">View Analytics</span>
                   </Button>
                 </div>
