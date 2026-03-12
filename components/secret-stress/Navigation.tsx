@@ -29,6 +29,7 @@ import {
   Phone,
   Info,
   LogIn,
+  Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
@@ -48,6 +49,7 @@ const NAV_LINKS: NavLink[] = [
   { href: "/crisis-resources", label: "Crisis Resources", icon: Phone },
   { href: "/about", label: "About", icon: Info },
   { href: "/login", label: "Login", icon: LogIn },
+  { href: "/admin/login", label: "Admin", icon: Shield },
 ];
 
 interface NavigationProps {
