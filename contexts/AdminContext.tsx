@@ -27,7 +27,7 @@ const AdminContext = createContext<AdminContextType | undefined>(undefined);
 // Default admin credentials (in production, this should be server-side)
 const ADMIN_CREDENTIALS = {
   username: "admin",
-  password: "silentstress2024"
+  password: "admin123"
 };
 
 export function AdminProvider({ children }: { children: ReactNode }) {

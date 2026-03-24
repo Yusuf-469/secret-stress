@@ -54,9 +54,11 @@ const NAV_LINKS: NavLink[] = [
 
 interface NavigationProps {
   className?: string;
+  /** When true, hides the mobile hamburger menu (used when showing bottom tab bar) */
+  hideMobile?: boolean;
 }
 
-export function Navigation({ className }: NavigationProps) {
+export function Navigation({ className, hideMobile = false }: NavigationProps) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const shouldReduceMotion = useReducedMotion();
@@ -127,90 +129,91 @@ export function Navigation({ className }: NavigationProps) {
           })}
         </nav>
 
-        {/* Mobile Navigation */}
-        <div className="flex items-center gap-2 md:hidden">
-          {/* Mobile Menu */}
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9"
-                aria-label="Open menu"
-                aria-expanded={isOpen}
-              >
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[280px] sm:w-[320px]">
-              <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-              <div className="flex h-full flex-col">
-                {/* Mobile Nav Header */}
-                <div className="flex items-center justify-between border-b pb-4">
-                  <Link
-                    href="/"
-                    className="flex items-center gap-2 text-lg font-semibold"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <Image 
-                      src="/silent stress.png" 
-                      alt="SILENT STRESS" 
-                      width={24} 
-                      height={24} 
-                      className="h-6 w-auto"
-                    />
-                    <span>SILENT STRESS</span>
-                  </Link>
+        {!hideMobile && (
+          <div className="flex items-center gap-2 md:hidden">
+            {/* Mobile Menu */}
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9"
+                  aria-label="Open menu"
+                  aria-expanded={isOpen}
+                >
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[280px] sm:w-[320px]">
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                <div className="flex h-full flex-col">
+                  {/* Mobile Nav Header */}
+                  <div className="flex items-center justify-between border-b pb-4">
+                    <Link
+                      href="/"
+                      className="flex items-center gap-2 text-lg font-semibold"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Image 
+                        src="/silent stress.png" 
+                        alt="SILENT STRESS" 
+                        width={24} 
+                        height={24} 
+                        className="h-6 w-auto"
+                      />
+                      <span>SILENT STRESS</span>
+                    </Link>
+                  </div>
+
+                  {/* Mobile Nav Links */}
+                  <nav className="flex-1 py-4" aria-label="Mobile navigation">
+                    <ul className="space-y-1">
+                      {NAV_LINKS.map((link) => {
+                        const Icon = link.icon;
+                        const active = isActive(link.href);
+
+                        return (
+                          <li key={link.href}>
+                            <Link
+                              href={link.href}
+                              onClick={() => setIsOpen(false)}
+                              className={cn(
+                                "flex items-center gap-3 rounded-md px-3 py-3 text-sm font-medium transition-colors",
+                                active
+                                  ? "bg-sage/10 text-sage-dark"
+                                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                              )}
+                              aria-current={active ? "page" : undefined}
+                            >
+                              <Icon className="h-5 w-5" />
+                              <span>{link.label}</span>
+                              {active && (
+                                <motion.div
+                                  layoutId="mobileActiveNav"
+                                  className="ml-auto h-2 w-2 rounded-full bg-sage"
+                                  transition={
+                                    shouldReduceMotion ? { duration: 0 } : { duration: 0.2 }
+                                  }
+                                />
+                              )}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </nav>
+
+                  {/* Mobile Nav Footer */}
+                  <div className="border-t pt-4">
+                    <p className="text-xs text-muted-foreground">
+                      You're not alone. Help is always available.
+                    </p>
+                  </div>
                 </div>
-
-                {/* Mobile Nav Links */}
-                <nav className="flex-1 py-4" aria-label="Mobile navigation">
-                  <ul className="space-y-1">
-                    {NAV_LINKS.map((link) => {
-                      const Icon = link.icon;
-                      const active = isActive(link.href);
-
-                      return (
-                        <li key={link.href}>
-                          <Link
-                            href={link.href}
-                            onClick={() => setIsOpen(false)}
-                            className={cn(
-                              "flex items-center gap-3 rounded-md px-3 py-3 text-sm font-medium transition-colors",
-                              active
-                                ? "bg-sage/10 text-sage-dark"
-                                : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                            )}
-                            aria-current={active ? "page" : undefined}
-                          >
-                            <Icon className="h-5 w-5" />
-                            <span>{link.label}</span>
-                            {active && (
-                              <motion.div
-                                layoutId="mobileActiveNav"
-                                className="ml-auto h-2 w-2 rounded-full bg-sage"
-                                transition={
-                                  shouldReduceMotion ? { duration: 0 } : { duration: 0.2 }
-                                }
-                              />
-                            )}
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </nav>
-
-                {/* Mobile Nav Footer */}
-                <div className="border-t pt-4">
-                  <p className="text-xs text-muted-foreground">
-                    You're not alone. Help is always available.
-                  </p>
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
-        </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+        )}
       </div>
     </header>
   );
