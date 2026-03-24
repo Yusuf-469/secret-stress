@@ -1,11 +1,7 @@
-"use client";
-
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
-import { useState, useEffect } from "react";
-import { MobileBottomNav } from "@/components/secret-stress/MobileBottomNav";
-import Navigation from "@/components/secret-stress/Navigation";
+import { ResponsiveNavigation } from "@/components/secret-stress/ResponsiveNavigation";
 
 export const metadata: Metadata = {
   title: "SILENT STRESS - Anonymous Academic Pressure Reporting",
@@ -47,19 +43,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [isMobile, setIsMobile] = useState(() => {
-    if (typeof window !== "undefined") {
-      return window.innerWidth < 768;
-    }
-    return true; // assume mobile on server to avoid mismatch
-  });
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -80,9 +63,7 @@ export default function RootLayout({
         {/* Main content */}
         <main id="main-content" className="relative">
           <Providers>
-            {/* Navigation - hide mobile hamburger on mobile when showing bottom tab bar */}
-            <Navigation hideMobile={isMobile} />
-            {isMobile && <MobileBottomNav />}
+            <ResponsiveNavigation />
             {children}
           </Providers>
         </main>
