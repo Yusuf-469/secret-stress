@@ -18,16 +18,18 @@ export function ResponsiveNavigation() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  return (
-    <>
-      {/* Desktop navigation (hidden on mobile, visible on desktop) */}
-      <Navigation className="hidden md:block" hideMobile={true} />
-      
-      {/* Mobile hamburger navigation (visible on mobile, hidden on desktop) */}
-      {isMobile && <Navigation className="block md:hidden" hideMobile={false} />}
-      
-      {/* Mobile bottom navigation (only on mobile) */}
-      {isMobile && <MobileBottomNav />}
-    </>
-  );
+  if (isMobile) {
+    return (
+      <>
+        {/* Mobile hamburger navigation (visible on mobile) */}
+        <Navigation className="block" hideMobile={false} showDesktopNav={false} />
+        {/* Mobile bottom navigation (only on mobile) */}
+        <MobileBottomNav />
+      </>
+    );
+  } else {
+    return (
+      <Navigation className="hidden" hideMobile={true} showDesktopNav={true} />
+    );
+  }
 }

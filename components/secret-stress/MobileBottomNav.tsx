@@ -11,6 +11,7 @@ import {
   Grid,
   Folder,
   Users,
+  Heart,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
@@ -50,29 +51,29 @@ export function MobileBottomNav() {
   let showFloatingReportButton = false;
 
   if (role === "student") {
-    // Student tabs: Home, History, Resources, Profile (Report as floating button)
+    // Student tabs based on existing hamburger navigation options: Home, Toolkit, Community, Settings
     tabs = [
       {
         href: "/",
         label: "Home",
         iconOutline: Home,
-        iconFilled: Home, // Using same icon for now; ideally have filled versions
+        iconFilled: Home,
       },
       {
-        href: "/toolkit", // Assuming History is in toolkit? Adjust as needed
-        label: "History",
-        iconOutline: ChartBar,
-        iconFilled: ChartBar,
+        href: "/toolkit",
+        label: "Toolkit",
+        iconOutline: Heart,
+        iconFilled: Heart,
       },
       {
-        href: "/resources", // Assuming Resources page
-        label: "Resources",
-        iconOutline: Book,
-        iconFilled: Book,
+        href: "/community",
+        label: "Community",
+        iconOutline: Users,
+        iconFilled: Users,
       },
       {
-        href: "/profile", // Assuming Profile page
-        label: "Profile",
+        href: "/profile",
+        label: "Settings",
         iconOutline: Settings,
         iconFilled: Settings,
       },

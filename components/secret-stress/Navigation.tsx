@@ -56,9 +56,11 @@ interface NavigationProps {
   className?: string;
   /** When true, hides the mobile hamburger menu (used when showing bottom tab bar) */
   hideMobile?: boolean;
+  /** When true, shows the desktop navigation links; when false, hides them (used when showing mobile hamburger menu) */
+  showDesktopNav?: boolean;
 }
 
-export function Navigation({ className, hideMobile = false }: NavigationProps) {
+export function Navigation({ className, hideMobile = false, showDesktopNav = true }: NavigationProps) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const shouldReduceMotion = useReducedMotion();
@@ -97,37 +99,39 @@ export function Navigation({ className, hideMobile = false }: NavigationProps) {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Main navigation">
-          {NAV_LINKS.map((link) => {
-            const Icon = link.icon;
-            const active = isActive(link.href);
+        {showDesktopNav !== false && (
+          <nav className="hidden items-center gap-1 md:flex" aria-label="Main navigation">
+            {NAV_LINKS.map((link) => {
+              const Icon = link.icon;
+              const active = isActive(link.href);
 
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  "relative flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                  active
-                    ? "text-blue-700"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-                aria-current={active ? "page" : undefined}
-              >
-                <Icon className="h-4 w-4" />
-                <span>{link.label}</span>
-                {active && (
-                  <motion.div
-                    layoutId="activeNav"
-                    className="absolute inset-0 rounded-md bg-blue-100"
-                    transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.2 }}
-                    style={{ zIndex: -1 }}
-                  />
-                )}
-              </Link>
-            );
-          })}
-        </nav>
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={cn(
+                    "relative flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                    active
+                      ? "text-blue-700"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                  aria-current={active ? "page" : undefined}
+                >
+                  <Icon className="h-4 w-4" />
+                  <span>{link.label}</span>
+                  {active && (
+                    <motion.div
+                      layoutId="activeNav"
+                      className="absolute inset-0 rounded-md bg-blue-100"
+                      transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.2 }}
+                      style={{ zIndex: -1 }}
+                    />
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
+        )}
 
         {!hideMobile && (
           <div className="flex items-center gap-2 md:hidden">
