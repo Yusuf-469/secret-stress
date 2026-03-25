@@ -19,17 +19,10 @@ export function ResponsiveNavigation() {
   }, []);
 
   if (isMobile) {
-    return (
-      <>
-        {/* Mobile hamburger navigation (visible on mobile) */}
-        <Navigation className="block" hideMobile={false} showDesktopNav={false} />
-        {/* Mobile bottom navigation (only on mobile) */}
-        <MobileBottomNav />
-      </>
-    );
+    // On mobile, only show the bottom navigation bar
+    return <MobileBottomNav />;
   } else {
-    return (
-      <Navigation className="hidden" hideMobile={true} showDesktopNav={true} />
-    );
+    // On desktop, show the horizontal navigation
+    return <Navigation className="hidden" hideMobile={true} showDesktopNav={true} />;
   }
 }
