@@ -1,6 +1,9 @@
+"use client";
+
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
+import { useAuth } from "@/contexts/AuthContext";
 import { ResponsiveNavigation } from "@/components/secret-stress/ResponsiveNavigation";
 
 export const metadata: Metadata = {
@@ -43,6 +46,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { isAuthenticated } = useAuth();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -61,10 +66,15 @@ export default function RootLayout({
         </a>
         
         {/* Main content */}
-        <main id="main-content" className="relative">
+        <main id="main-content" className="relative min-h-screen flex flex-col">
           <Providers>
-            <ResponsiveNavigation />
-            {children}
+            {/* Only show navigation when authenticated */}
+            {isAuthenticated && <ResponsiveNavigation />}
+            
+            {/* Main content - Hero section should be visible by default */}
+            <div className="flex-1">
+              {children}
+            </div>
           </Providers>
         </main>
       </body>
