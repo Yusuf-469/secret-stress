@@ -1,10 +1,7 @@
-"use client";
-
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
-import { useAuth } from "@/contexts/AuthContext";
-import { ResponsiveNavigation } from "@/components/secret-stress/ResponsiveNavigation";
+import { AuthenticatedNavigation } from "@/components/secret-stress/AuthenticatedNavigation";
 
 export const metadata: Metadata = {
   title: "SILENT STRESS - Anonymous Academic Pressure Reporting",
@@ -46,8 +43,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { isAuthenticated } = useAuth();
-
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -66,15 +61,11 @@ export default function RootLayout({
         </a>
         
         {/* Main content */}
-        <main id="main-content" className="relative min-h-screen flex flex-col">
+        <main id="main-content" className="relative">
           <Providers>
-            {/* Only show navigation when authenticated */}
-            {isAuthenticated && <ResponsiveNavigation />}
-            
-            {/* Main content - Hero section should be visible by default */}
-            <div className="flex-1">
+            <AuthenticatedNavigation>
               {children}
-            </div>
+            </AuthenticatedNavigation>
           </Providers>
         </main>
       </body>
