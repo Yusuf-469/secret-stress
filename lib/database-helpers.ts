@@ -55,15 +55,3 @@ export const Download: React.FC<{ className?: string }> = ({ className }) => (
 export const ChevronRight: React.FC<{ className?: string }> = ({ className }) => (
   <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
 );
-
-// Database query helpers
-export { getDatabase as get, query, ref as databaseRef, orderByChild } from "@/lib/firebase";
-
-// Type guard for database queries
-export function equalTo(val: any) {
-  return { __type: "equalTo", val };
-}
-
-export function orderByChild(path: string) {
-  return { __type: "orderByChild", path };
-}
