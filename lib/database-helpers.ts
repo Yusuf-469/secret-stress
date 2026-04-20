@@ -57,7 +57,7 @@ export const ChevronRight: React.FC<{ className?: string }> = ({ className }) =>
 );
 
 // Database query helpers
-export { get, query, ref, orderByChild } from "@/lib/firebase";
+export { getDatabase as get, query, ref as databaseRef, orderByChild } from "@/lib/firebase";
 
 // Type guard for database queries
 export function equalTo(val: any) {

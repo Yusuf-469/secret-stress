@@ -2,6 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getDatabase } from 'firebase/database';
 import { getAnalytics } from 'firebase/analytics';
+import { ref, query, orderByChild, get } from 'firebase/database';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCrfCEwG8gBf9LJJaj6vy1o8C3fWjBjbAA",
@@ -19,6 +20,9 @@ const app = initializeApp(firebaseConfig);
 // Initialize Firebase services
 export const auth = getAuth(app);
 export const db = getDatabase(app);
+
+// Database query exports for use in components
+export { ref, query, orderByChild, get };
 
 // Initialize Analytics (only in browser)
 let analytics;
