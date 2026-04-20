@@ -81,12 +81,18 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isLogin) {
-      await login(email, password);
-    } else {
-      await signup(email, password);
+    try {
+      if (isLogin) {
+        await login(email, password);
+      } else {
+        await signup(email, password);
+      }
+      // Authentication state will be updated by AuthContext
+      // The redirect will happen automatically due to the isAuthenticated check above
+    } catch (error) {
+      console.error("Authentication error:", error);
+      // Error handling can be added here if needed
     }
-    router.push("/submit");
   };
 
   return (

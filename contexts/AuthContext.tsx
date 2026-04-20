@@ -46,7 +46,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Convert Firebase user to our User type
   const convertFirebaseUser = async (firebaseUser: FirebaseUser): Promise<User> => {
     // Try to get user profile from database
-    let dbUser = await userOps.getById(firebaseUser.uid);
+    let dbUser;
+    try {
+      dbUser = await userOps.getById(firebaseUser.uid);
+    } catch (error) {
+      console.warn("Could not read user from database:", error);
+    }
 
     if (!dbUser) {
       // Create new user profile
@@ -59,8 +64,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         status: 'active',
       };
 
-      // Save to database
-      await userOps.upsert(dbUser);
+      // Try to save to database (don't fail if it doesn't work)
+      try {
+        await userOps.upsert(dbUser);
+      } catch (error) {
+        console.warn("Could not save user to database:", error);
+      }
     }
 
     return {
@@ -77,14 +86,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Listen to Firebase auth state changes
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
+        // User is authenticated with Firebase
+        setIsAuthenticated(true);
+
+        // Try to load additional user data from database (don't fail auth if this fails)
         try {
           const userData = await convertFirebaseUser(firebaseUser);
           setUser(userData);
-          setIsAuthenticated(true);
         } catch (error) {
-          console.error("Error loading user data:", error);
-          setIsAuthenticated(false);
-          setUser(null);
+          console.warn("Error loading user data from database:", error);
+          // Still set basic user data from Firebase
+          setUser({
+            id: firebaseUser.uid,
+            email: firebaseUser.email || '',
+            displayName: firebaseUser.displayName || undefined,
+            createdAt: new Date(),
+            submissionCount: 0,
+            status: 'active',
+          });
         }
       } else {
         setUser(null);
