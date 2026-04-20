@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Convert Firebase user to our User type
   const convertFirebaseUser = async (firebaseUser: FirebaseUser): Promise<User> => {
     // Try to get user profile from database
-    let dbUser;
+    let dbUser: any;
     try {
       dbUser = await userOps.getById(firebaseUser.uid);
     } catch (error) {
@@ -61,12 +61,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         displayName: firebaseUser.displayName || undefined,
         createdAt: Date.now(),
         submissionCount: 0,
-        status: 'active',
+        status: 'active' as const,
       };
 
       // Try to save to database (don't fail if it doesn't work)
       try {
-        await userOps.upsert(dbUser);
+        await userOps.upsert(dbUser as Omit<User, 'id'> & { id: string });
       } catch (error) {
         console.warn("Could not save user to database:", error);
       }
@@ -77,8 +77,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email: dbUser.email || '',
       displayName: dbUser.displayName,
       createdAt: new Date(dbUser.createdAt),
-      submissionCount: dbUser.submissionCount,
-      status: dbUser.status,
+      submissionCount: dbUser.submissionCount || 0,
+      status: (dbUser.status as User['status']) || 'active',
     };
   };
 
@@ -102,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             displayName: firebaseUser.displayName || undefined,
             createdAt: new Date(),
             submissionCount: 0,
-            status: 'active',
+            status: 'active' as const,
           });
         }
       } else {
