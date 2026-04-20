@@ -1,6 +1,23 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+
+// Types
+interface Submission {
+  id: string;
+  content: string;
+  stressLevel: number;
+  status: string;
+  createdAt: string;
+}
+
+interface User {
+  id: string;
+  email: string;
+  createdAt: string;
+  submissionCount: number;
+  status: string;
+}
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -15,6 +32,12 @@ import {
   Share2,
   Download,
   ChevronRight,
+  Filter,
+  Clock,
+  Eye,
+  Trash2,
+  Shield,
+  LogOut,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,6 +48,7 @@ import {
   ref,
   query,
   orderByChild,
+  equalTo,
   onValue,
   get,
 } from "@/lib/firebase";
@@ -176,7 +200,7 @@ function OverviewContent() {
 
 // Submissions content component
 function SubmissionsContent() {
-  const [submissions, setSubmissions] = useState([]);
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -190,8 +214,8 @@ function SubmissionsContent() {
         if (snapshot.exists()) {
           const submissionsData = Object.entries(snapshot.val()).map(([id, data]) => ({
             id,
-            ...data,
-          }));
+            ...(data as Record<string, any>),
+          } as Submission));
           setSubmissions(submissionsData.reverse()); // Reverse to show newest first
         } else {
           setSubmissions([]);
@@ -286,7 +310,7 @@ function SubmissionsContent() {
 
 // Users content component
 function UsersContent() {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -299,8 +323,8 @@ function UsersContent() {
         if (snapshot.exists()) {
           const usersData = Object.entries(snapshot.val()).map(([id, data]) => ({
             id,
-            ...data,
-          }));
+            ...(data as Record<string, any>),
+          } as User));
           setUsers(usersData);
         } else {
           setUsers([]);
@@ -435,10 +459,7 @@ function AnalyticsContent() {
   );
 }
 
-// Helper functions (mock implementations)
-function equalTo(val) {
-  return { __type: 'equalTo', val };
-}
+
 
 export default function AdminDashboardPage() {
   const { isAdminAuthenticated, isAdminLoading, admin, refreshAdminStatus } = useAdmin();

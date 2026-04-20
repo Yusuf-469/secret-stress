@@ -1,4 +1,5 @@
 import {
+  getDatabase,
   ref,
   push,
   set,
@@ -6,6 +7,7 @@ import {
   remove,
   query,
   orderByChild,
+  equalTo,
   get,
 } from 'firebase/database';
 import { db, ref as databaseRef } from '@/lib/firebase';

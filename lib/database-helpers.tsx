@@ -12,19 +12,19 @@ export { Input } from "@/components/ui/input";
 export { Label } from "@/components/ui/label";
 
 // Icons
-export const Eye: React.FC<{ className?: string }> = ({ className }) => (
+export const Eye = ({ className }: { className?: string }) => (
   <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
 );
 
-export const EyeOff: React.FC<{ className?: string }> = ({ className }) => (
+export const EyeOff = ({ className }: { className?: string }) => (
   <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><path d="M3.3 3.3l18.4 18.4" /><path d="M9 11a3 3 0 1 0 6-2 3 3 0 0 0-6-2z" /></svg>
 );
 
-export const Shield: React.FC<{ className?: string }> = ({ className }) => (
+export const Shield = ({ className }: { className?: string }) => (
   <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 13c0 5-3.5 7.5-7.6 8.9a2 2 0 0 1-1.8 0C3.5 20.5 0 18 0 13a8 8 0 0 1 16 0z" /><path d="M12 22V12" /><path d="M8 12h.01" /><path d="M12 12h.01" /><path d="M16 12h.01" /></svg>
 );
 
-export const Lock: React.FC<{ className?: string }> = ({ className }) => (
+export const Lock = ({ className }: { className?: string }) => (
   <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
 );
 

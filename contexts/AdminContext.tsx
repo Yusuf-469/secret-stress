@@ -116,7 +116,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
   return (
     <AdminContext.Provider
-      value={{ isAdminAuthenticated, isAdminLoading, admin, adminLogin, adminLogout }}
+      value={{ isAdminAuthenticated, isAdminLoading, admin, adminLogin, adminLogout, refreshAdminStatus }}
     >
       {children}
     </AdminContext.Provider>

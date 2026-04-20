@@ -119,7 +119,7 @@ export function Navigation({ className, hideMobile = false, showDesktopNav = tru
         {/* Desktop Navigation */}
         {showDesktopNav !== false && (
           <nav className="hidden items-center gap-1 md:flex" aria-label="Main navigation">
-            {NAV_LINKS.map((link) => {
+            {navLinks.map((link) => {
               const Icon = link.icon;
               const active = isActive(link.href);
 
