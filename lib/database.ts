@@ -79,6 +79,193 @@ export const submissionOps = {
     return newRef.key!;
   },
 
+  // Get all submissions (admin only) - using Realtime Database query
+  async getAll(): Promise<Submission[]> {
+    const dbInstance = getDatabase();
+    const submissionsRef = query(dbRefs.submissions, orderByChild('createdAt'));
+    const snapshot = await get(submissionsRef);
+    const submissions = snapshotToArray<Submission>(snapshot);
+    // Realtime DB doesn't sort descending by default, so we reverse the array
+    return submissions.reverse();
+  },
+
+  // Update submission status (admin only)
+  async updateStatus(id: string, status: Submission['status']): Promise<void> {
+    const submissionRef = ref(db, `submissions/${id}`);
+    await update(submissionRef, {
+      status,
+      updatedAt: Date.now(),
+    });
+  },
+
+  // Delete submission (admin only)
+  async delete(id: string): Promise<void> {
+    const submissionRef = ref(db, `submissions/${id}`);
+    await remove(submissionRef);
+  },
+};
+
+// User operations
+export const userOps = {
+  // Get user by ID
+  async getById(uid: string): Promise<User | null> {
+    const userRef = ref(db, `users/${uid}`);
+    const snapshot = await get(userRef);
+
+    if (snapshot.exists()) {
+      return {
+        id: uid,
+        ...snapshot.val(),
+      } as User;
+    }
+    return null;
+  },
+
+  // Create or update user profile
+  async upsert(user: Omit<User, 'id'> & { id: string }): Promise<void> {
+    const userRef = ref(db, `users/${user.id}`);
+    await set(userRef, {
+      ...user,
+      updatedAt: Date.now(),
+    });
+  },
+};
+
+// Crisis alert operations
+export const crisisOps = {
+  // Create a crisis alert (admin only)
+  async create(alert: Omit<CrisisAlert, 'id' | 'createdAt'>): Promise<string> {
+    const newRef = push(dbRefs.crisisAlerts);
+    const newAlert: CrisisAlert = {
+      ...alert,
+      createdAt: Date.now(),
+    };
+    await set(newRef, newAlert);
+    return newRef.key!;
+  },
+
+  // Get all active crisis alerts (admin only) - using Realtime Database query
+  async getActive(): Promise<CrisisAlert[]> {
+    const dbInstance = getDatabase();
+    const alertsRef = query(dbRefs.crisisAlerts, orderByChild('status'), equalTo('active'));
+    const snapshot = await get(alertsRef);
+    const alerts = snapshotToArray<CrisisAlert>(snapshot);
+    return alerts;
+  },
+
+  // Resolve a crisis alert (admin only)
+  async resolve(id: string): Promise<void> {
+    const alertRef = ref(db, `crisisAlerts/${id}`);
+    await update(alertRef, {
+      status: 'resolved',
+      resolvedAt: Date.now(),
+    });
+  },
+};
+
+// Analytics operations
+export const analyticsOps = {
+  // Get dashboard stats (admin only) - using Realtime Database query
+  async getStats(): Promise<{
+    totalSubmissions: number;
+    activeUsers: number;
+    crisisAlerts: number;
+    resolvedCases: number;
+  }> {
+    try {
+      const dbInstance = getDatabase();
+      
+      // Get submissions count using query
+      const submissionsSnapshot = await get(query(dbRefs.submissions));
+      const totalSubmissions = submissionsSnapshot.exists() ? Object.keys(submissionsSnapshot.val()).length : 0;
+
+      // Get users count
+      const usersSnapshot = await get(dbRefs.users);
+      const activeUsers = usersSnapshot.exists() ? Object.keys(usersSnapshot.val()).length : 0;
+
+      // Get crisis alerts count using query for active alerts
+      const alertsSnapshot = await get(query(dbRefs.crisisAlerts, orderByChild('status'), equalTo('active')));
+      const crisisAlerts = alertsSnapshot.exists() ? Object.keys(alertsSnapshot.val()).length : 0;
+
+      // Get resolved cases count using query
+      const resolvedSnapshot = await get(query(dbRefs.crisisAlerts, orderByChild('status'), equalTo('resolved')));
+      const resolvedCases = resolvedSnapshot.exists() ? Object.keys(resolvedSnapshot.val()).length : 0;
+
+      return {
+        totalSubmissions,
+        activeUsers,
+        crisisAlerts,
+        resolvedCases,
+      };
+    } catch (error) {
+      console.error('Error getting analytics stats:', error);
+      // Return zeros on error
+      return {
+        totalSubmissions: 0,
+        activeUsers: 0,
+        crisisAlerts: 0,
+        resolvedCases: 0,
+      };
+    }
+  },
+};
+
+// Types
+export interface Submission {
+  id?: string;
+  content: string;
+  stressLevel: number;
+  tags: string[];
+  status: 'pending' | 'reviewed' | 'flagged' | 'resolved';
+  createdAt: number; // Timestamp as number for Realtime DB
+  updatedAt: number;
+  userId?: string; // Optional for anonymous submissions
+}
+
+export interface User {
+  id: string;
+  email?: string;
+  displayName?: string;
+  createdAt: number;
+  submissionCount: number;
+  status: 'active' | 'flagged' | 'banned';
+}
+
+export interface CrisisAlert {
+  id?: string;
+  submissionId: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  status: 'active' | 'resolved';
+  createdAt: number;
+  resolvedAt?: number;
+}
+
+// Helper function to convert DataSnapshot to array
+function snapshotToArray<T>(snapshot: DataSnapshot): T[] {
+  const items: T[] = [];
+  snapshot.forEach((childSnapshot) => {
+    items.push({
+      id: childSnapshot.key,
+      ...childSnapshot.val(),
+    } as T);
+  });
+  return items;
+}
+
+// Submission operations
+export const submissionOps = {
+  // Create a new submission (anonymous or authenticated)
+  async create(submission: Omit<Submission, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+    const newRef = push(dbRefs.submissions);
+    const newSubmission: Submission = {
+      ...submission,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+    await set(newRef, newSubmission);
+    return newRef.key!;
+  },
+
   // Get all submissions (admin only)
   async getAll(): Promise<Submission[]> {
     const snapshot = await get(query(dbRefs.submissions, orderByChild('createdAt')));

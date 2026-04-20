@@ -1,12 +1,5 @@
 "use client";
 
-/**
- * Admin Login Page - SILENT STRESS
- *
- * Authentication page for admin access to the dashboard.
- * Uses Firebase Auth + custom claims for secure admin access.
- */
-
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -46,11 +39,10 @@ export default function AdminLoginPage() {
       // Sign in with Firebase Auth
       await signInWithEmailAndPassword(auth, email, password);
 
-      // Check if user has admin claims (this will happen in the context)
+      // Refresh admin status to check custom claims
       await refreshAdminStatus();
 
       // The redirect will happen via the useEffect above when isAdminAuthenticated becomes true
-
     } catch (error: any) {
       console.error("Admin login error:", error);
       if (error.code === "auth/user-not-found") {
@@ -75,14 +67,7 @@ export default function AdminLoginPage() {
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <motion.div
           className="absolute -left-40 top-40 h-80 w-80 rounded-full bg-blue-200/50 blur-3xl"
-          animate={
-            shouldReduceMotion
-              ? {}
-              : {
-                  scale: [1, 1.2, 1],
-                  opacity: [0.3, 0.5, 0.3],
-                }
-          }
+          animate={shouldReduceMotion ? {} : { scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
           transition={{
             duration: 10,
             repeat: Infinity,
@@ -91,14 +76,7 @@ export default function AdminLoginPage() {
         />
         <motion.div
           className="absolute -right-40 bottom-40 h-80 w-80 rounded-full bg-blue-300/50 blur-3xl"
-          animate={
-            shouldReduceMotion
-              ? {}
-              : {
-                  scale: [1.2, 1, 1.2],
-                  opacity: [0.3, 0.5, 0.3],
-                }
-          }
+          animate={shouldReduceMotion ? {} : { scale: [1.2, 1, 1.2], opacity: [0.3, 0.5, 0.3] }}
           transition={{
             duration: 10,
             repeat: Infinity,
@@ -144,7 +122,7 @@ export default function AdminLoginPage() {
                   Admin Email
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-blue-400" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-blue-400" />
                   <Input
                     id="email"
                     type="email"
@@ -162,7 +140,7 @@ export default function AdminLoginPage() {
                   Password
                 </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-blue-400" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-blue-400" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
@@ -205,10 +183,6 @@ export default function AdminLoginPage() {
             </div>
           </CardContent>
         </Card>
-
-        <p className="mt-4 text-center text-xs text-blue-400">
-          Authorized personnel only. All access attempts are logged.
-        </p>
       </motion.div>
     </div>
   );
