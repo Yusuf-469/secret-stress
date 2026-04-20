@@ -5,7 +5,8 @@ import {
   update,
   remove,
 } from 'firebase/database';
-import { db, ref as databaseRef, query, orderByChild, get, equalTo } from '@/lib/firebase';
+import { db, ref as databaseRef, query, orderByChild, get } from '@/lib/firebase';
+import { equalTo } from '@/lib/firebase';
 
 // Database references
 export const dbRefs = {
