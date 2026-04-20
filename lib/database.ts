@@ -7,7 +7,6 @@ import {
   query,
   orderByChild,
   get,
-  equalTo,
 } from 'firebase/database';
 import { db, ref as databaseRef } from '@/lib/firebase';
 
