@@ -31,7 +31,7 @@ interface User {
   id: string;
   email: string;
   displayName?: string;
-  createdAt: Date;
+  createdAt: number;
   submissionCount: number;
   status: 'active' | 'flagged' | 'banned';
 }
@@ -76,7 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       id: dbUser.id,
       email: dbUser.email || '',
       displayName: dbUser.displayName,
-      createdAt: new Date(dbUser.createdAt),
+      createdAt: dbUser.createdAt,
       submissionCount: dbUser.submissionCount || 0,
       status: (dbUser.status as User['status']) || 'active',
     };
@@ -100,7 +100,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             id: firebaseUser.uid,
             email: firebaseUser.email || '',
             displayName: firebaseUser.displayName || undefined,
-            createdAt: new Date(),
+            createdAt: Date.now(),
             submissionCount: 0,
             status: 'active' as const,
           });
