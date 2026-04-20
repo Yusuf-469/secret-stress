@@ -4,81 +4,114 @@
  * Admin Context
  *
  * Manages admin authentication state for the SILENT STRESS application.
+ * Uses Firebase Auth + custom claims for secure admin access.
  */
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { checkAdminRole } from "@/lib/admin";
 
 interface AdminContextType {
   isAdminAuthenticated: boolean;
   isAdminLoading: boolean;
   admin: Admin | null;
-  adminLogin: (username: string, password: string) => Promise<boolean>;
+  adminLogin: (email: string, password: string) => Promise<boolean>;
   adminLogout: () => void;
+  refreshAdminStatus: () => Promise<void>;
 }
 
 interface Admin {
   id: string;
-  username: string;
+  email: string;
   role: string;
+  uid: string;
 }
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
-
-// Default admin credentials (in production, this should be server-side)
-const ADMIN_CREDENTIALS = {
-  username: "admin",
-  password: "admin123"
-};
 
 export function AdminProvider({ children }: { children: ReactNode }) {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
   const [isAdminLoading, setIsAdminLoading] = useState(true);
   const [admin, setAdmin] = useState<Admin | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
-  useEffect(() => {
-    // Check for existing admin session
-    const savedAdmin = localStorage.getItem("silentStressAdmin");
-    if (savedAdmin) {
-      try {
-        const parsedAdmin = JSON.parse(savedAdmin);
-        setAdmin(parsedAdmin);
-        setIsAdminAuthenticated(true);
-      } catch {
-        localStorage.removeItem("silentStressAdmin");
-      }
-    }
-    setIsAdminLoading(false);
-  }, []);
-
-  const adminLogin = async (username: string, password: string): Promise<boolean> => {
-    setIsAdminLoading(true);
-    
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // Check credentials
-    if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-      const newAdmin: Admin = {
-        id: "1",
-        username: username,
-        role: "admin",
-      };
-      
-      setAdmin(newAdmin);
-      setIsAdminAuthenticated(true);
-      localStorage.setItem("silentStressAdmin", JSON.stringify(newAdmin));
+  // Check admin role for current user
+  const checkAndSetAdminStatus = async (user: User | null) => {
+    if (!user) {
+      setIsAdminAuthenticated(false);
+      setAdmin(null);
       setIsAdminLoading(false);
-      return true;
+      return;
     }
-    
+
+    setCurrentUser(user);
+
+    try {
+      const isAdmin = await checkAdminRole();
+      if (isAdmin) {
+        const adminData: Admin = {
+          id: user.uid,
+          email: user.email || "",
+          role: "admin",
+          uid: user.uid,
+        };
+
+        setAdmin(adminData);
+        setIsAdminAuthenticated(true);
+      } else {
+        setIsAdminAuthenticated(false);
+        setAdmin(null);
+      }
+    } catch (error) {
+      console.error("Error checking admin status:", error);
+      setIsAdminAuthenticated(false);
+      setAdmin(null);
+    }
+
     setIsAdminLoading(false);
-    return false;
   };
 
-  const adminLogout = () => {
-    setAdmin(null);
-    setIsAdminAuthenticated(false);
-    localStorage.removeItem("silentStressAdmin");
+  useEffect(() => {
+    // Listen to Firebase auth state changes
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      checkAndSetAdminStatus(user);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const adminLogin = async (email: string, password: string): Promise<boolean> => {
+    setIsAdminLoading(true);
+
+    try {
+      // Note: This function now expects Firebase authentication
+      // The actual login should happen through Firebase Auth
+      // This is a placeholder - real login happens in the component
+      setIsAdminLoading(false);
+      return false;
+    } catch (error) {
+      console.error("Admin login error:", error);
+      setIsAdminLoading(false);
+      return false;
+    }
+  };
+
+  const adminLogout = async () => {
+    try {
+      await auth.signOut();
+      setAdmin(null);
+      setIsAdminAuthenticated(false);
+      setCurrentUser(null);
+    } catch (error) {
+      console.error("Admin logout error:", error);
+    }
+  };
+
+  const refreshAdminStatus = async () => {
+    if (currentUser) {
+      await checkAndSetAdminStatus(currentUser);
+    }
   };
 
   return (

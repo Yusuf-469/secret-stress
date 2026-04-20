@@ -35,6 +35,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useAdmin } from "@/contexts/AdminContext";
+import { AdminProtectedRoute } from "@/components/secret-stress/AdminProtectedRoute";
 
 // Mock data for dashboard
 const mockStats = {
@@ -92,56 +93,60 @@ export default function AdminDashboardPage() {
     }
   }, [isAdminAuthenticated, isAdminLoading, router]);
 
-  if (isAdminLoading || !isAdminAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900">
-        <div className="text-center">
-          <div className="mb-4 h-8 w-8 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent mx-auto"></div>
-          <p className="text-slate-400">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
   const handleLogout = () => {
     adminLogout();
     router.push("/admin/login");
   };
 
+  if (isAdminLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-blue-50">
+        <div className="text-center">
+          <div className="mb-4 h-8 w-8 animate-spin rounded-full border-2 border-blue-500 border-t-transparent mx-auto"></div>
+          <p className="text-blue-600">Loading admin dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAdminAuthenticated) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-blue-50">
-      {/* Header */}
-      <header className="border-b border-blue-100 bg-white/80 backdrop-blur-xl sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/" className="flex items-center gap-2">
-                <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-                  <Shield className="h-5 w-5 text-white" />
-                </div>
-                <span className="text-xl font-bold text-gray-900">SILENT STRESS</span>
-              </Link>
-              <Badge variant="outline" className="border-blue-500/50 text-blue-600">
-                Admin Panel
-              </Badge>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">
-                Welcome, {admin?.username}
-              </span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleLogout}
-                className="text-gray-600 hover:text-gray-900"
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Logout
-              </Button>
+        {/* Header */}
+        <header className="border-b border-blue-100 bg-white/80 backdrop-blur-xl sticky top-0 z-40">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Link href="/" className="flex items-center gap-2">
+                  <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                    <Shield className="h-5 w-5 text-white" />
+                  </div>
+                  <span className="text-xl font-bold text-gray-900">SILENT STRESS</span>
+                </Link>
+                <Badge variant="outline" className="border-blue-500/50 text-blue-600">
+                  Admin Panel
+                </Badge>
+              </div>
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-gray-600">
+                  Welcome, {admin?.email}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleLogout}
+                  className="text-gray-600 hover:text-gray-900"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
       <div className="container mx-auto px-4 py-8">
         {/* Stats Grid */}
@@ -449,6 +454,5 @@ export default function AdminDashboardPage() {
           </Card>
         )}
       </div>
-    </div>
   );
 }

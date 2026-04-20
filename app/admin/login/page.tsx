@@ -4,43 +4,68 @@
  * Admin Login Page - SILENT STRESS
  *
  * Authentication page for admin access to the dashboard.
+ * Uses Firebase Auth + custom claims for secure admin access.
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
-import { Eye, EyeOff, Shield, Lock, AlertCircle, User } from "lucide-react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { Eye, EyeOff, Shield, Lock, AlertCircle, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useAdmin } from "@/contexts/AdminContext";
+import { auth } from "@/lib/firebase";
 
 export default function AdminLoginPage() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const { adminLogin, isAdminLoading, isAdminAuthenticated } = useAdmin();
+  const [isLoading, setIsLoading] = useState(false);
+  const { isAdminAuthenticated, refreshAdminStatus } = useAdmin();
   const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
 
   // Redirect if already authenticated
-  if (isAdminAuthenticated) {
-    router.push("/admin/dashboard");
-    return null;
-  }
+  useEffect(() => {
+    if (isAdminAuthenticated) {
+      router.push("/admin/dashboard");
+    }
+  }, [isAdminAuthenticated, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
 
-    const success = await adminLogin(username, password);
-    if (success) {
-      router.push("/admin/dashboard");
-    } else {
-      setError("Invalid username or password");
+    try {
+      // Sign in with Firebase Auth
+      await signInWithEmailAndPassword(auth, email, password);
+
+      // Check if user has admin claims (this will happen in the context)
+      await refreshAdminStatus();
+
+      // The redirect will happen via the useEffect above when isAdminAuthenticated becomes true
+
+    } catch (error: any) {
+      console.error("Admin login error:", error);
+      if (error.code === "auth/user-not-found") {
+        setError("No admin account found with this email");
+      } else if (error.code === "auth/wrong-password") {
+        setError("Invalid password");
+      } else if (error.code === "auth/invalid-email") {
+        setError("Invalid email format");
+      } else if (error.code === "auth/too-many-requests") {
+        setError("Too many failed attempts. Please try again later.");
+      } else {
+        setError("Login failed. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -115,17 +140,17 @@ export default function AdminLoginPage() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="username" className="text-gray-700">
-                  Username
+                <Label htmlFor="email" className="text-gray-700">
+                  Admin Email
                 </Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-blue-400" />
+                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-blue-400" />
                   <Input
-                    id="username"
-                    type="text"
-                    placeholder="Enter username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    id="email"
+                    type="email"
+                    placeholder="Enter admin email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="border-blue-200 bg-blue-50 pl-10 text-gray-900 placeholder:text-blue-300 focus:border-blue-500 focus:ring-blue-500"
                     required
                   />
@@ -164,9 +189,9 @@ export default function AdminLoginPage() {
               <Button
                 type="submit"
                 className="w-full bg-blue-600 hover:bg-blue-700"
-                disabled={isAdminLoading}
+                disabled={isLoading}
               >
-                {isAdminLoading ? "Signing in..." : "Sign In"}
+                {isLoading ? "Signing in..." : "Sign In"}
               </Button>
             </form>
 

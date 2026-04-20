@@ -4,10 +4,19 @@
  * Auth Context
  *
  * Manages authentication state for the SILENT STRESS application.
- * Since this is an anonymous platform, authentication is simplified.
+ * Uses Firebase Auth for secure user authentication.
  */
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  User as FirebaseUser,
+} from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { userOps } from "@/lib/database";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -21,7 +30,10 @@ interface AuthContextType {
 interface User {
   id: string;
   email: string;
+  displayName?: string;
   createdAt: Date;
+  submissionCount: number;
+  status: 'active' | 'flagged' | 'banned';
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -31,62 +43,86 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
 
-  useEffect(() => {
-    // Check for existing session
-    const savedUser = localStorage.getItem("secretStressUser");
-    if (savedUser) {
-      try {
-        const parsedUser = JSON.parse(savedUser);
-        setUser(parsedUser);
-        setIsAuthenticated(true);
-      } catch {
-        localStorage.removeItem("secretStressUser");
-      }
+  // Convert Firebase user to our User type
+  const convertFirebaseUser = async (firebaseUser: FirebaseUser): Promise<User> => {
+    // Try to get user profile from database
+    let dbUser = await userOps.getById(firebaseUser.uid);
+
+    if (!dbUser) {
+      // Create new user profile
+      dbUser = {
+        id: firebaseUser.uid,
+        email: firebaseUser.email || '',
+        displayName: firebaseUser.displayName || undefined,
+        createdAt: new Date(),
+        submissionCount: 0,
+        status: 'active',
+      };
+
+      // Save to database
+      await userOps.upsert(dbUser);
     }
-    setIsLoading(false);
+
+    return {
+      id: dbUser.id,
+      email: dbUser.email || '',
+      displayName: dbUser.displayName,
+      createdAt: dbUser.createdAt.toDate(),
+      submissionCount: dbUser.submissionCount,
+      status: dbUser.status,
+    };
+  };
+
+  useEffect(() => {
+    // Listen to Firebase auth state changes
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        try {
+          const userData = await convertFirebaseUser(firebaseUser);
+          setUser(userData);
+          setIsAuthenticated(true);
+        } catch (error) {
+          console.error("Error loading user data:", error);
+          setIsAuthenticated(false);
+          setUser(null);
+        }
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
+      }
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const login = async (email: string, password: string) => {
-    setIsLoading(true);
-    // Simulate login - in real app, this would validate credentials
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    const newUser: User = {
-      id: Math.random().toString(36).substr(2, 9),
-      email: email || "anonymous@secretstress.app",
-      createdAt: new Date(),
-    };
-
-    setUser(newUser);
-    setIsAuthenticated(true);
-    localStorage.setItem("secretStressUser", JSON.stringify(newUser));
-    localStorage.setItem("secretStressSession", "true");
-    setIsLoading(false);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      // User state will be updated by the onAuthStateChanged listener
+    } catch (error: any) {
+      console.error("Login error:", error);
+      throw new Error(error.message || "Login failed");
+    }
   };
 
   const signup = async (email: string, password: string) => {
-    setIsLoading(true);
-    // Simulate signup - in real app, this would create account
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    const newUser: User = {
-      id: Math.random().toString(36).substr(2, 9),
-      email: email || "anonymous@secretstress.app",
-      createdAt: new Date(),
-    };
-
-    setUser(newUser);
-    setIsAuthenticated(true);
-    localStorage.setItem("secretStressUser", JSON.stringify(newUser));
-    localStorage.setItem("secretStressSession", "true");
-    setIsLoading(false);
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      // User state will be updated by the onAuthStateChanged listener
+    } catch (error: any) {
+      console.error("Signup error:", error);
+      throw new Error(error.message || "Signup failed");
+    }
   };
 
-  const logout = () => {
-    setUser(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem("secretStressUser");
-    localStorage.removeItem("secretStressSession");
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      // User state will be updated by the onAuthStateChanged listener
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
 
   return (

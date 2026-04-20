@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Admin-only collections
+    match /adminOnly/{document=**} {
+      allow read, write: if request.auth != null
+                         && request.auth.token.admin == true;
+    }
+
+    // Admin user management
+    match /adminUsers/{userId} {
+      allow read, write: if request.auth != null
+                         && request.auth.token.admin == true;
+    }
+
+    // User submissions (anonymous)
+    match /submissions/{submissionId} {
+      // Users can create submissions anonymously or when authenticated
+      allow create: if true;
+      // Only admins can read/update/delete submissions
+      allow read, update, delete: if request.auth != null
+                                   && request.auth.token.admin == true;
+    }
+
+    // Crisis alerts (admin only)
+    match /crisisAlerts/{alertId} {
+      allow read, write: if request.auth != null
+                         && request.auth.token.admin == true;
+    }
+
+    // Analytics data (admin only)
+    match /analytics/{document=**} {
+      allow read, write: if request.auth != null
+                         && request.auth.token.admin == true;
+    }
+
+    // User profiles (users can only access their own)
+    match /users/{userId} {
+      allow read, write: if request.auth != null
+                         && request.auth.uid == userId;
+    }
+
+    // Public content (read-only for everyone)
+    match /public/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.auth.token.admin == true;
+    }
+  }
+}

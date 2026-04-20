@@ -34,6 +34,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { useAdmin } from "@/contexts/AdminContext";
 
 interface NavLink {
   href: string;
@@ -41,16 +42,21 @@ interface NavLink {
   icon: React.ElementType;
 }
 
-const NAV_LINKS: NavLink[] = [
+// Base navigation links (always shown)
+const BASE_NAV_LINKS: NavLink[] = [
   { href: "/", label: "Home", icon: Home },
   { href: "/submit", label: "Submit", icon: PenLine },
   { href: "/community", label: "Community", icon: Users },
   { href: "/toolkit", label: "Toolkit", icon: Heart },
   { href: "/crisis-resources", label: "Crisis Resources", icon: Phone },
   { href: "/about", label: "About", icon: Info },
-  { href: "/login", label: "Login", icon: LogIn },
-  { href: "/admin/login", label: "Admin", icon: Shield },
 ];
+
+// Admin navigation link (conditionally shown)
+const ADMIN_NAV_LINK: NavLink = { href: "/admin/dashboard", label: "Admin", icon: Shield };
+
+// Login link (shown when not authenticated)
+const LOGIN_NAV_LINK: NavLink = { href: "/login", label: "Login", icon: LogIn };
 
 interface NavigationProps {
   className?: string;
@@ -64,6 +70,18 @@ export function Navigation({ className, hideMobile = false, showDesktopNav = tru
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const shouldReduceMotion = useReducedMotion();
+  const { isAdminAuthenticated } = useAdmin();
+
+  // Build navigation links dynamically based on auth status
+  const navLinks = [...BASE_NAV_LINKS];
+
+  // Add admin link if user is admin
+  if (isAdminAuthenticated) {
+    navLinks.push(ADMIN_NAV_LINK);
+  } else {
+    // Add login link if not authenticated as admin
+    navLinks.push(LOGIN_NAV_LINK);
+  }
 
   const isActive = useCallback(
     (href: string) => {
@@ -172,7 +190,7 @@ export function Navigation({ className, hideMobile = false, showDesktopNav = tru
                   {/* Mobile Nav Links */}
                   <nav className="flex-1 py-4" aria-label="Mobile navigation">
                     <ul className="space-y-1">
-                      {NAV_LINKS.map((link) => {
+            {navLinks.map((link) => {
                         const Icon = link.icon;
                         const active = isActive(link.href);
 
