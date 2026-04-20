@@ -35,50 +35,35 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useAdmin } from "@/contexts/AdminContext";
+import { analyticsOps, submissionOps, crisisOps, Submission } from "@/lib/database";
 import { AdminProtectedRoute } from "@/components/secret-stress/AdminProtectedRoute";
 
-// Mock data for dashboard
-const mockStats = {
-  totalSubmissions: 1247,
-  activeUsers: 342,
-  crisisAlerts: 12,
-  resolvedCases: 1089,
-  weeklyGrowth: 15.3,
-  monthlyGrowth: 42.7,
-};
+// Dashboard state
+interface DashboardStats {
+  totalSubmissions: number;
+  activeUsers: number;
+  crisisAlerts: number;
+  resolvedCases: number;
+  weeklyGrowth: number;
+  monthlyGrowth: number;
+}
 
-const mockSubmissions = [
-  {
-    id: "1",
-    content: "Academic pressure is overwhelming...",
-    stressLevel: 8,
-    date: "2024-01-15",
-    status: "pending",
-    tags: ["academic", "exams"],
-  },
-  {
-    id: "2",
-    content: "Feeling anxious about results...",
-    stressLevel: 6,
-    date: "2024-01-15",
-    status: "reviewed",
-    tags: ["anxiety", "results"],
-  },
-  {
-    id: "3",
-    content: "Need someone to talk to...",
-    stressLevel: 9,
-    date: "2024-01-14",
-    status: "flagged",
-    tags: ["crisis", "support"],
-  },
-];
+interface DashboardSubmission {
+  id: string;
+  content: string;
+  stressLevel: number;
+  date: string;
+  status: 'pending' | 'reviewed' | 'flagged' | 'resolved';
+  tags: string[];
+}
 
-const mockUsers = [
-  { id: "1", username: "Student_001", submissions: 5, joined: "2024-01-01", status: "active" },
-  { id: "2", username: "Student_002", submissions: 12, joined: "2024-01-05", status: "active" },
-  { id: "3", username: "Student_003", submissions: 2, joined: "2024-01-10", status: "flagged" },
-];
+interface DashboardUser {
+  id: string;
+  username: string;
+  submissions: number;
+  joined: string;
+  status: 'active' | 'flagged' | 'banned';
+}
 
 export default function AdminDashboardPage() {
   const { isAdminAuthenticated, isAdminLoading, admin, adminLogout } = useAdmin();
@@ -87,11 +72,65 @@ export default function AdminDashboardPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("overview");
 
+  // Dashboard data state
+  const [stats, setStats] = useState<DashboardStats>({
+    totalSubmissions: 0,
+    activeUsers: 0,
+    crisisAlerts: 0,
+    resolvedCases: 0,
+    weeklyGrowth: 0,
+    monthlyGrowth: 0,
+  });
+  const [submissions, setSubmissions] = useState<DashboardSubmission[]>([]);
+  const [users, setUsers] = useState<DashboardUser[]>([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     if (!isAdminLoading && !isAdminAuthenticated) {
       router.push("/admin/login");
     }
   }, [isAdminAuthenticated, isAdminLoading, router]);
+
+  // Fetch dashboard data
+  useEffect(() => {
+    if (isAdminAuthenticated) {
+      fetchDashboardData();
+    }
+  }, [isAdminAuthenticated]);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+
+      // Fetch stats
+      const statsData = await analyticsOps.getStats();
+      setStats({
+        ...statsData,
+        weeklyGrowth: 0, // TODO: Calculate based on time periods
+        monthlyGrowth: 0, // TODO: Calculate based on time periods
+      });
+
+      // Fetch recent submissions
+      const submissionsData = await submissionOps.getAll();
+      const formattedSubmissions: DashboardSubmission[] = submissionsData.slice(0, 10).map(sub => ({
+        id: sub.id!,
+        content: sub.content.length > 100 ? sub.content.substring(0, 100) + '...' : sub.content,
+        stressLevel: sub.stressLevel,
+        date: new Date(sub.createdAt).toISOString().split('T')[0],
+        status: sub.status,
+        tags: sub.tags,
+      }));
+      setSubmissions(formattedSubmissions);
+
+      // TODO: Fetch users data when user management is implemented
+      setUsers([]);
+
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogout = () => {
     adminLogout();
@@ -111,6 +150,19 @@ export default function AdminDashboardPage() {
 
   if (!isAdminAuthenticated) {
     return null;
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-blue-50">
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="text-center">
+            <div className="mb-4 h-8 w-8 animate-spin rounded-full border-2 border-blue-500 border-t-transparent mx-auto"></div>
+            <p className="text-blue-600">Loading dashboard data...</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -164,10 +216,10 @@ export default function AdminDashboardPage() {
                 <MessageSquare className="h-4 w-4 text-blue-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-gray-900">{mockStats.totalSubmissions.toLocaleString()}</div>
+                <div className="text-2xl font-bold text-gray-900">{stats.totalSubmissions.toLocaleString()}</div>
                 <p className="text-xs text-green-600 flex items-center mt-1">
                   <TrendingUp className="h-3 w-3 mr-1" />
-                  +{mockStats.weeklyGrowth}% this week
+                  +{stats.weeklyGrowth}% this week
                 </p>
               </CardContent>
             </Card>
@@ -186,10 +238,10 @@ export default function AdminDashboardPage() {
                 <Users className="h-4 w-4 text-blue-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-gray-900">{mockStats.activeUsers.toLocaleString()}</div>
+                <div className="text-2xl font-bold text-gray-900">{stats.activeUsers.toLocaleString()}</div>
                 <p className="text-xs text-green-600 flex items-center mt-1">
                   <TrendingUp className="h-3 w-3 mr-1" />
-                  +{mockStats.monthlyGrowth}% this month
+                  +{stats.monthlyGrowth}% this month
                 </p>
               </CardContent>
             </Card>
@@ -208,7 +260,7 @@ export default function AdminDashboardPage() {
                 <AlertTriangle className="h-4 w-4 text-red-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-gray-900">{mockStats.crisisAlerts}</div>
+                <div className="text-2xl font-bold text-gray-900">{stats.crisisAlerts}</div>
                 <p className="text-xs text-red-600 flex items-center mt-1">
                   Requires attention
                 </p>
@@ -229,7 +281,7 @@ export default function AdminDashboardPage() {
                 <CheckCircle className="h-4 w-4 text-green-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-gray-900">{mockStats.resolvedCases.toLocaleString()}</div>
+                <div className="text-2xl font-bold text-gray-900">{stats.resolvedCases.toLocaleString()}</div>
                 <p className="text-xs text-gray-500 flex items-center mt-1">
                   87% resolution rate
                 </p>
@@ -279,7 +331,7 @@ export default function AdminDashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {mockSubmissions.map((submission) => (
+                  {submissions.map((submission) => (
                     <div
                       key={submission.id}
                       className="flex items-start justify-between p-3 rounded-lg bg-blue-50"
@@ -403,7 +455,7 @@ export default function AdminDashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {mockUsers.map((user) => (
+                {users.map((user) => (
                   <div
                     key={user.id}
                     className="flex items-center justify-between p-4 rounded-lg bg-slate-700/30"

@@ -1,27 +1,26 @@
 import {
-  collection,
-  doc,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  getDoc,
-  getDocs,
+  ref,
+  push,
+  set,
+  update,
+  remove,
+  get,
   query,
-  where,
-  orderBy,
-  limit,
-  Timestamp,
-  onSnapshot,
-} from 'firebase/firestore';
+  orderByChild,
+  equalTo,
+  onValue,
+  off,
+  DataSnapshot,
+} from 'firebase/database';
 import { db } from '@/lib/firebase';
 
-// Collection references
-export const collections = {
-  submissions: collection(db, 'submissions'),
-  users: collection(db, 'users'),
-  crisisAlerts: collection(db, 'crisisAlerts'),
-  analytics: collection(db, 'analytics'),
-  adminOnly: collection(db, 'adminOnly'),
+// Database references
+export const dbRefs = {
+  submissions: ref(db, 'submissions'),
+  users: ref(db, 'users'),
+  crisisAlerts: ref(db, 'crisisAlerts'),
+  analytics: ref(db, 'analytics'),
+  adminOnly: ref(db, 'adminOnly'),
 };
 
 // Types
@@ -31,8 +30,8 @@ export interface Submission {
   stressLevel: number;
   tags: string[];
   status: 'pending' | 'reviewed' | 'flagged' | 'resolved';
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
+  createdAt: number; // Timestamp as number for Realtime DB
+  updatedAt: number;
   userId?: string; // Optional for anonymous submissions
 }
 
@@ -40,7 +39,7 @@ export interface User {
   id: string;
   email?: string;
   displayName?: string;
-  createdAt: Timestamp;
+  createdAt: number;
   submissionCount: number;
   status: 'active' | 'flagged' | 'banned';
 }
@@ -50,45 +49,57 @@ export interface CrisisAlert {
   submissionId: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
   status: 'active' | 'resolved';
-  createdAt: Timestamp;
-  resolvedAt?: Timestamp;
+  createdAt: number;
+  resolvedAt?: number;
+}
+
+// Helper function to convert DataSnapshot to array
+function snapshotToArray<T>(snapshot: DataSnapshot): T[] {
+  const items: T[] = [];
+  snapshot.forEach((childSnapshot) => {
+    items.push({
+      id: childSnapshot.key,
+      ...childSnapshot.val(),
+    } as T);
+  });
+  return items;
 }
 
 // Submission operations
 export const submissionOps = {
   // Create a new submission (anonymous or authenticated)
   async create(submission: Omit<Submission, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
-    const docRef = await addDoc(collections.submissions, {
+    const newRef = push(dbRefs.submissions);
+    const newSubmission: Submission = {
       ...submission,
-      createdAt: Timestamp.now(),
-      updatedAt: Timestamp.now(),
-    });
-    return docRef.id;
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+    await set(newRef, newSubmission);
+    return newRef.key!;
   },
 
   // Get all submissions (admin only)
   async getAll(): Promise<Submission[]> {
-    const q = query(collections.submissions, orderBy('createdAt', 'desc'));
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    } as Submission));
+    const snapshot = await get(query(dbRefs.submissions, orderByChild('createdAt')));
+    const submissions = snapshotToArray<Submission>(snapshot);
+    // Realtime DB doesn't sort descending by default, so we reverse the array
+    return submissions.reverse();
   },
 
   // Update submission status (admin only)
   async updateStatus(id: string, status: Submission['status']): Promise<void> {
-    const docRef = doc(collections.submissions, id);
-    await updateDoc(docRef, {
+    const submissionRef = ref(db, `submissions/${id}`);
+    await update(submissionRef, {
       status,
-      updatedAt: Timestamp.now(),
+      updatedAt: Date.now(),
     });
   },
 
   // Delete submission (admin only)
   async delete(id: string): Promise<void> {
-    const docRef = doc(collections.submissions, id);
-    await deleteDoc(docRef);
+    const submissionRef = ref(db, `submissions/${id}`);
+    await remove(submissionRef);
   },
 };
 
@@ -96,13 +107,13 @@ export const submissionOps = {
 export const userOps = {
   // Get user by ID
   async getById(uid: string): Promise<User | null> {
-    const docRef = doc(collections.users, uid);
-    const docSnap = await getDoc(docRef);
+    const userRef = ref(db, `users/${uid}`);
+    const snapshot = await get(userRef);
 
-    if (docSnap.exists()) {
+    if (snapshot.exists()) {
       return {
-        id: docSnap.id,
-        ...docSnap.data(),
+        id: uid,
+        ...snapshot.val(),
       } as User;
     }
     return null;
@@ -110,10 +121,10 @@ export const userOps = {
 
   // Create or update user profile
   async upsert(user: Omit<User, 'id'> & { id: string }): Promise<void> {
-    const docRef = doc(collections.users, user.id);
-    await updateDoc(docRef, {
+    const userRef = ref(db, `users/${user.id}`);
+    await set(userRef, {
       ...user,
-      updatedAt: Timestamp.now(),
+      updatedAt: Date.now(),
     });
   },
 };
@@ -122,33 +133,27 @@ export const userOps = {
 export const crisisOps = {
   // Create a crisis alert (admin only)
   async create(alert: Omit<CrisisAlert, 'id' | 'createdAt'>): Promise<string> {
-    const docRef = await addDoc(collections.crisisAlerts, {
+    const newRef = push(dbRefs.crisisAlerts);
+    const newAlert: CrisisAlert = {
       ...alert,
-      createdAt: Timestamp.now(),
-    });
-    return docRef.id;
+      createdAt: Date.now(),
+    };
+    await set(newRef, newAlert);
+    return newRef.key!;
   },
 
   // Get all active crisis alerts (admin only)
   async getActive(): Promise<CrisisAlert[]> {
-    const q = query(
-      collections.crisisAlerts,
-      where('status', '==', 'active'),
-      orderBy('createdAt', 'desc')
-    );
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    } as CrisisAlert));
+    const snapshot = await get(query(dbRefs.crisisAlerts, orderByChild('status'), equalTo('active')));
+    return snapshotToArray<CrisisAlert>(snapshot);
   },
 
   // Resolve a crisis alert (admin only)
   async resolve(id: string): Promise<void> {
-    const docRef = doc(collections.crisisAlerts, id);
-    await updateDoc(docRef, {
+    const alertRef = ref(db, `crisisAlerts/${id}`);
+    await update(alertRef, {
       status: 'resolved',
-      resolvedAt: Timestamp.now(),
+      resolvedAt: Date.now(),
     });
   },
 };
@@ -162,22 +167,38 @@ export const analyticsOps = {
     crisisAlerts: number;
     resolvedCases: number;
   }> {
-    // This would typically aggregate data from various collections
-    // For now, return mock data - replace with real aggregations
-    const submissionsSnapshot = await getDocs(collections.submissions);
-    const usersSnapshot = await getDocs(collections.users);
-    const alertsSnapshot = await getDocs(
-      query(collections.crisisAlerts, where('status', '==', 'active'))
-    );
-    const resolvedSnapshot = await getDocs(
-      query(collections.crisisAlerts, where('status', '==', 'resolved'))
-    );
+    try {
+      // Get submissions count
+      const submissionsSnapshot = await get(dbRefs.submissions);
+      const totalSubmissions = submissionsSnapshot.exists() ? Object.keys(submissionsSnapshot.val()).length : 0;
 
-    return {
-      totalSubmissions: submissionsSnapshot.size,
-      activeUsers: usersSnapshot.size,
-      crisisAlerts: alertsSnapshot.size,
-      resolvedCases: resolvedSnapshot.size,
-    };
+      // Get users count
+      const usersSnapshot = await get(dbRefs.users);
+      const activeUsers = usersSnapshot.exists() ? Object.keys(usersSnapshot.val()).length : 0;
+
+      // Get crisis alerts count
+      const alertsSnapshot = await get(query(dbRefs.crisisAlerts, orderByChild('status'), equalTo('active')));
+      const crisisAlerts = alertsSnapshot.exists() ? Object.keys(alertsSnapshot.val()).length : 0;
+
+      // Get resolved cases count
+      const resolvedSnapshot = await get(query(dbRefs.crisisAlerts, orderByChild('status'), equalTo('resolved')));
+      const resolvedCases = resolvedSnapshot.exists() ? Object.keys(resolvedSnapshot.val()).length : 0;
+
+      return {
+        totalSubmissions,
+        activeUsers,
+        crisisAlerts,
+        resolvedCases,
+      };
+    } catch (error) {
+      console.error('Error getting analytics stats:', error);
+      // Return zeros on error
+      return {
+        totalSubmissions: 0,
+        activeUsers: 0,
+        crisisAlerts: 0,
+        resolvedCases: 0,
+      };
+    }
   },
 };

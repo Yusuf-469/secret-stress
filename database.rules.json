@@ -1,0 +1,39 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "submissions": {
+      ".read": "auth != null && auth.token.admin == true",
+      ".write": "auth != null && auth.token.admin == true",
+      "$submissionId": {
+        ".validate": "newData.hasChildren(['content', 'stressLevel', 'tags', 'status', 'createdAt', 'updatedAt'])"
+      }
+    },
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid",
+        ".validate": "newData.hasChildren(['email', 'createdAt', 'submissionCount', 'status'])"
+      }
+    },
+    "adminOnly": {
+      ".read": "auth != null && auth.token.admin == true",
+      ".write": "auth != null && auth.token.admin == true"
+    },
+    "crisisAlerts": {
+      ".read": "auth != null && auth.token.admin == true",
+      ".write": "auth != null && auth.token.admin == true",
+      "$alertId": {
+        ".validate": "newData.hasChildren(['submissionId', 'severity', 'status', 'createdAt'])"
+      }
+    },
+    "analytics": {
+      ".read": "auth != null && auth.token.admin == true",
+      ".write": "auth != null && auth.token.admin == true"
+    },
+    "public": {
+      ".read": true,
+      ".write": "auth != null && auth.token.admin == true"
+    }
+  }
+}

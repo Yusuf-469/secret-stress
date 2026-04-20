@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         id: firebaseUser.uid,
         email: firebaseUser.email || '',
         displayName: firebaseUser.displayName || undefined,
-        createdAt: new Date(),
+        createdAt: Date.now(),
         submissionCount: 0,
         status: 'active',
       };
@@ -67,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       id: dbUser.id,
       email: dbUser.email || '',
       displayName: dbUser.displayName,
-      createdAt: dbUser.createdAt.toDate(),
+      createdAt: new Date(dbUser.createdAt),
       submissionCount: dbUser.submissionCount,
       status: dbUser.status,
     };
