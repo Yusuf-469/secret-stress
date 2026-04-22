@@ -19,7 +19,7 @@ export default function AdminLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { isAdminAuthenticated, refreshAdminStatus } = useAdmin();
+  const { isAdminAuthenticated, isRegularUser, refreshAdminStatus } = useAdmin();
   const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
 
@@ -27,8 +27,10 @@ export default function AdminLoginPage() {
   useEffect(() => {
     if (isAdminAuthenticated) {
       router.push("/admin/dashboard");
+    } else if (isRegularUser) {
+      setError("You are logged in but do not have admin access. Please contact an administrator.");
     }
-  }, [isAdminAuthenticated, router]);
+  }, [isAdminAuthenticated, isRegularUser, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +44,20 @@ export default function AdminLoginPage() {
       // Refresh admin status to check custom claims
       await refreshAdminStatus();
 
-      // The redirect will happen via the useEffect above when isAdminAuthenticated becomes true
+      // Check if user is authenticated but not admin after a short delay
+      setTimeout(() => {
+        if (!isAdminAuthenticated && !isRegularUser) {
+          // Still loading, wait a bit more
+        } else if (!isAdminAuthenticated && isRegularUser) {
+          setError("You are logged in but do not have admin access. Please contact an administrator.");
+        } else if (isAdminAuthenticated) {
+          // Success - redirect will happen via useEffect
+        } else {
+          setError("Login failed. Please check your credentials.");
+        }
+        setIsLoading(false);
+      }, 2000);
+
     } catch (error: any) {
       console.error("Admin login error:", error);
       if (error.code === "auth/user-not-found") {
@@ -56,7 +71,6 @@ export default function AdminLoginPage() {
       } else {
         setError("Login failed. Please try again.");
       }
-    } finally {
       setIsLoading(false);
     }
   };

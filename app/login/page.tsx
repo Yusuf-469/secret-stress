@@ -23,6 +23,7 @@ import {
   Users,
   Clock,
   Mail,
+  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -69,6 +70,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
   const { login, signup, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
@@ -81,6 +83,8 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+
     try {
       if (isLogin) {
         await login(email, password);
@@ -89,9 +93,29 @@ export default function LoginPage() {
       }
       // Authentication state will be updated by AuthContext
       // The redirect will happen automatically due to the isAuthenticated check above
-    } catch (error) {
+    } catch (error: any) {
       console.error("Authentication error:", error);
-      // Error handling can be added here if needed
+
+      // Handle specific Firebase auth errors
+      if (error.message) {
+        if (error.message.includes("auth/user-not-found")) {
+          setError("No account found with this email");
+        } else if (error.message.includes("auth/wrong-password")) {
+          setError("Incorrect password");
+        } else if (error.message.includes("auth/invalid-email")) {
+          setError("Invalid email format");
+        } else if (error.message.includes("auth/email-already-in-use")) {
+          setError("An account with this email already exists");
+        } else if (error.message.includes("auth/weak-password")) {
+          setError("Password should be at least 6 characters");
+        } else if (error.message.includes("auth/too-many-requests")) {
+          setError("Too many failed attempts. Please try again later.");
+        } else {
+          setError(error.message);
+        }
+      } else {
+        setError(isLogin ? "Login failed. Please try again." : "Signup failed. Please try again.");
+      }
     }
   };
 
@@ -123,6 +147,17 @@ export default function LoginPage() {
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleSubmit} className="space-y-4">
+                    {error && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex items-center gap-2 rounded-lg bg-red-50 border border-red-100 p-3 text-sm text-red-600"
+                      >
+                        <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                        {error}
+                      </motion.div>
+                    )}
+
                     <div className="space-y-2">
                       <Label htmlFor="email">Email (optional)</Label>
                       <Input

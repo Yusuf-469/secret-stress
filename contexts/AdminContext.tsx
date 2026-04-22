@@ -16,6 +16,7 @@ interface AdminContextType {
   isAdminAuthenticated: boolean;
   isAdminLoading: boolean;
   admin: Admin | null;
+  isRegularUser: boolean; // User is logged in but not admin
   adminLogin: (email: string, password: string) => Promise<boolean>;
   adminLogout: () => void;
   refreshAdminStatus: () => Promise<void>;
@@ -35,12 +36,14 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const [isAdminLoading, setIsAdminLoading] = useState(true);
   const [admin, setAdmin] = useState<Admin | null>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isRegularUser, setIsRegularUser] = useState(false);
 
   // Check admin role for current user
   const checkAndSetAdminStatus = async (user: User | null) => {
     if (!user) {
       setIsAdminAuthenticated(false);
       setAdmin(null);
+      setIsRegularUser(false);
       setIsAdminLoading(false);
       return;
     }
@@ -59,14 +62,17 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
         setAdmin(adminData);
         setIsAdminAuthenticated(true);
+        setIsRegularUser(false);
       } else {
         setIsAdminAuthenticated(false);
         setAdmin(null);
+        setIsRegularUser(true); // User is logged in but not admin
       }
     } catch (error) {
       console.error("Error checking admin status:", error);
       setIsAdminAuthenticated(false);
       setAdmin(null);
+      setIsRegularUser(false);
     }
 
     setIsAdminLoading(false);
@@ -116,7 +122,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
   return (
     <AdminContext.Provider
-      value={{ isAdminAuthenticated, isAdminLoading, admin, adminLogin, adminLogout, refreshAdminStatus }}
+      value={{ isAdminAuthenticated, isAdminLoading, admin, isRegularUser, adminLogin, adminLogout, refreshAdminStatus }}
     >
       {children}
     </AdminContext.Provider>
