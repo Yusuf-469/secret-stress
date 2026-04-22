@@ -25,6 +25,7 @@ import {
   Lock,
   Eye,
   EyeOff,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,6 +37,8 @@ import { FeatureCard, FeatureGrid } from "@/components/secret-stress/FeatureCard
 import { ScrollReveal } from "@/components/secret-stress/ScrollReveal";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
+import { getAuthErrorMessage, getAuthLoadingText } from "@/lib/auth-errors";
+import { AuthErrorDisplay } from "@/components/ui/auth-components";
 
 const features = [
   {
@@ -94,20 +97,36 @@ export default function HomePage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
 
   // Scroll animations
   const { scrollYProgress } = useScroll();
   const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
 
+  // Clear error when inputs change
+  useEffect(() => {
+    if (error) {
+      setError("");
+    }
+  }, [email, password]);
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isLogin) {
-      await login(email, password);
-    } else {
-      await signup(email, password);
+    setError("");
+
+    try {
+      if (isLogin) {
+        await login(email, password);
+      } else {
+        await signup(email, password);
+      }
+      // Authentication state will be updated by AuthContext
+      // The redirect will happen automatically due to the isAuthenticated check
+    } catch (error: any) {
+      console.error("Authentication error:", error);
+      setError(getAuthErrorMessage(error));
     }
-    router.push("/submit");
   };
 
   const handleLogout = () => {
@@ -314,6 +333,8 @@ export default function HomePage() {
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleAuth} className="space-y-4">
+                    <AuthErrorDisplay error={error} />
+
                     <div className="space-y-2">
                       <Label htmlFor="email">Email (optional)</Label>
                       <Input
@@ -352,7 +373,10 @@ export default function HomePage() {
                       className="w-full bg-sage hover:bg-sage-dark"
                       disabled={isLoading}
                     >
-                      {isLoading ? "Loading..." : isLogin ? "Sign In" : "Sign Up"}
+                      {isLoading
+                        ? getAuthLoadingText(isLogin ? "login" : "signup")
+                        : isLogin ? "Sign In" : "Sign Up"
+                      }
                     </Button>
                   </form>
 

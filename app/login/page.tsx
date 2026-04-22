@@ -7,7 +7,7 @@
  * This is the entry point - users must authenticate to access the site.
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import {
@@ -32,6 +32,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { ScrollReveal } from "@/components/secret-stress/ScrollReveal";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
+import { getAuthErrorMessage, getAuthLoadingText } from "@/lib/auth-errors";
+import { AuthErrorDisplay } from "@/components/ui/auth-components";
 
 const features = [
   {
@@ -81,6 +83,13 @@ export default function LoginPage() {
     return null;
   }
 
+  // Clear error when inputs change
+  useEffect(() => {
+    if (error) {
+      setError("");
+    }
+  }, [email, password]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -95,27 +104,7 @@ export default function LoginPage() {
       // The redirect will happen automatically due to the isAuthenticated check above
     } catch (error: any) {
       console.error("Authentication error:", error);
-
-      // Handle specific Firebase auth errors
-      if (error.message) {
-        if (error.message.includes("auth/user-not-found")) {
-          setError("No account found with this email");
-        } else if (error.message.includes("auth/wrong-password")) {
-          setError("Incorrect password");
-        } else if (error.message.includes("auth/invalid-email")) {
-          setError("Invalid email format");
-        } else if (error.message.includes("auth/email-already-in-use")) {
-          setError("An account with this email already exists");
-        } else if (error.message.includes("auth/weak-password")) {
-          setError("Password should be at least 6 characters");
-        } else if (error.message.includes("auth/too-many-requests")) {
-          setError("Too many failed attempts. Please try again later.");
-        } else {
-          setError(error.message);
-        }
-      } else {
-        setError(isLogin ? "Login failed. Please try again." : "Signup failed. Please try again.");
-      }
+      setError(getAuthErrorMessage(error));
     }
   };
 
@@ -147,16 +136,7 @@ export default function LoginPage() {
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleSubmit} className="space-y-4">
-                    {error && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center gap-2 rounded-lg bg-red-50 border border-red-100 p-3 text-sm text-red-600"
-                      >
-                        <AlertCircle className="h-4 w-4 flex-shrink-0" />
-                        {error}
-                      </motion.div>
-                    )}
+                    <AuthErrorDisplay error={error} />
 
                     <div className="space-y-2">
                       <Label htmlFor="email">Email (optional)</Label>

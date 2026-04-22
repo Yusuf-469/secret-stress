@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useAdmin } from "@/contexts/AdminContext";
 import { auth } from "@/lib/firebase";
+import { AuthErrorDisplay } from "@/components/ui/auth-components";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
@@ -31,6 +32,13 @@ export default function AdminLoginPage() {
       setError("You are logged in but do not have admin access. Please contact an administrator.");
     }
   }, [isAdminAuthenticated, isRegularUser, router]);
+
+  // Clear error when inputs change
+  useEffect(() => {
+    if (error) {
+      setError("");
+    }
+  }, [email, password]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,17 +68,7 @@ export default function AdminLoginPage() {
 
     } catch (error: any) {
       console.error("Admin login error:", error);
-      if (error.code === "auth/user-not-found") {
-        setError("No admin account found with this email");
-      } else if (error.code === "auth/wrong-password") {
-        setError("Invalid password");
-      } else if (error.code === "auth/invalid-email") {
-        setError("Invalid email format");
-      } else if (error.code === "auth/too-many-requests") {
-        setError("Too many failed attempts. Please try again later.");
-      } else {
-        setError("Login failed. Please try again.");
-      }
+      setError(getAuthErrorMessage(error));
       setIsLoading(false);
     }
   };
@@ -120,16 +118,7 @@ export default function AdminLoginPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center gap-2 rounded-lg bg-red-50 border border-red-100 p-3 text-sm text-red-600"
-                >
-                  <AlertCircle className="h-4 w-4" />
-                  {error}
-                </motion.div>
-              )}
+              <AuthErrorDisplay error={error} />
 
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-gray-700">
