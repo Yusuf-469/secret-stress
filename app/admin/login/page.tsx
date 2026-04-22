@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useAdmin } from "@/contexts/AdminContext";
 import { auth } from "@/lib/firebase";
+import { getAuthErrorMessage } from "@/lib/auth-errors";
 import { AuthErrorDisplay } from "@/components/ui/auth-components";
 
 export default function AdminLoginPage() {
